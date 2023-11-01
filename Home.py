@@ -17,7 +17,7 @@ st.image(image, use_column_width=True)
 server = os.environ.get('server_name')
 database = os.environ.get('db_name')
 username = os.environ.get('db_username')
-password = os.environ.get('password')
+password = os.environ.get('db_password')
 
 conn = pyodbc.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
@@ -651,7 +651,7 @@ if enrollee_id:
                 message = msg_befor_table + table_html + text_after_table
                 message1 = msg_befor_table + table_html + text_after_table1
                 myemail = 'noreply@avonhealthcare.com'
-                password = 'AVHMOtech@29'
+                password = os.environ.get('emailpassword')
                 cc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'adebola.adesoyin@avonhealthcare.com']
                 to_email_list =[recipient_email]
                 # myemail = 'ademola.atolagbe@avonhealthcare.com'
