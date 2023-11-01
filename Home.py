@@ -14,32 +14,32 @@ st.set_page_config(layout='wide')
 image = Image.open('wellness_image_1.png')
 st.image(image, use_column_width=True)
 
-# server = os.environ.get('server_name')
-# database = os.environ.get('db_name')
-# username = os.environ.get('db_username')
-# password = os.environ.get('password')
-
-# conn = pyodbc.connect(
-#         'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-#         + server
-#         +';DATABASE='
-#         + database
-#         +';UID='
-#         + username
-#         +';PWD='
-#         + password
-#         )
+server = os.environ.get('server_name')
+database = os.environ.get('db_name')
+username = os.environ.get('db_username')
+password = os.environ.get('password')
 
 conn = pyodbc.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-        +st.secrets['server']
+        + server
         +';DATABASE='
-        +st.secrets['database']
+        + database
         +';UID='
-        +st.secrets['username']
+        + username
         +';PWD='
-        +st.secrets['password']
+        + password
         )
+
+# conn = pyodbc.connect(
+#         'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
+#         +st.secrets['server']
+#         +';DATABASE='
+#         +st.secrets['database']
+#         +';UID='
+#         +st.secrets['username']
+#         +';PWD='
+#         +st.secrets['password']
+#         )
 
 query1 = 'SELECT * from vw_wellness_enrollee_portal'
 query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, Wellness_benefits, selected_date, selected_session, date_submitted\
