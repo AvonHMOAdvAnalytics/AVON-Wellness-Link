@@ -49,7 +49,7 @@ query3 = 'select * from wellness_providers'
 def get_data_from_sql():
     wellness_df = pd.read_sql(query1, conn)
     wellness_providers = pd.read_sql(query3, conn)
-    conn.close()
+    # conn.close()
     return wellness_df, wellness_providers
 
 wellness_df, wellness_providers = get_data_from_sql()
