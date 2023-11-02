@@ -14,32 +14,32 @@ st.set_page_config(layout='wide')
 image = Image.open('wellness_image_1.png')
 st.image(image, use_column_width=True)
 
-server = os.environ.get('server_name')
-database = os.environ.get('db_name')
-username = os.environ.get('db_username')
-password = os.environ.get('db_password')
-
-conn = pyodbc.connect(
-        'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-        + server
-        +';DATABASE='
-        + database
-        +';UID='
-        + username
-        +';PWD='
-        + password
-        )
+# server = os.environ.get('server_name')
+# database = os.environ.get('db_name')
+# username = os.environ.get('db_username')
+# password = os.environ.get('db_password')
 
 # conn = pyodbc.connect(
 #         'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-#         +st.secrets['server']
+#         + server
 #         +';DATABASE='
-#         +st.secrets['database']
+#         + database
 #         +';UID='
-#         +st.secrets['username']
+#         + username
 #         +';PWD='
-#         +st.secrets['password']
+#         + password
 #         )
+
+conn = pyodbc.connect(
+        'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
+        +st.secrets['server']
+        +';DATABASE='
+        +st.secrets['database']
+        +';UID='
+        +st.secrets['username']
+        +';PWD='
+        +st.secrets['password']
+        )
 
 query1 = 'SELECT * from vw_wellness_enrollee_portal'
 query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, Wellness_benefits, selected_date, selected_session, date_submitted\
@@ -651,7 +651,8 @@ if enrollee_id:
                 message = msg_befor_table + table_html + text_after_table
                 message1 = msg_befor_table + table_html + text_after_table1
                 myemail = 'noreply@avonhealthcare.com'
-                password = os.environ.get('emailpassword')
+                password = 'AVHMOtech@29'
+                # password = os.environ.get('emailpassword')
                 cc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'adebola.adesoyin@avonhealthcare.com']
                 to_email_list =[recipient_email]
                 # myemail = 'ademola.atolagbe@avonhealthcare.com'
