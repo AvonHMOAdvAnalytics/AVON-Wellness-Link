@@ -41,9 +41,11 @@ conn = pyodbc.connect(
 #         +st.secrets['password']
 #         )
 
-query1 = 'SELECT * from vw_wellness_enrollee_portal'
+query1 = "SELECT * from vw_wellness_enrollee_portal\
+            where client = 'UNITED BANK FOR AFRICA'\
+                "
 query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, Wellness_benefits, selected_date, selected_session, date_submitted\
-            FROM [dbo].[enrollee_test_data_from_portal]'
+            FROM [dbo].[2023_uba_annual_wellness_data]'
 query3 = 'select * from wellness_providers'
 @st.cache_data(ttl = dt.timedelta(hours=24))
 def get_data_from_sql():
@@ -67,7 +69,7 @@ if 'user_data' not in st.session_state:
         'email': '',
         'mobile_num': '',
         'state': 'ABIA',
-        'selected_provider': 'LIVING WORD HOSPITAL ABA - 5/7 Umuocham road off Aba- Owerri road Aba.',
+        'selected_provider': 'LIVING WORD MISSION HOSPITAL - 5/7 Umuocham road off Aba- Owerri road Aba',
         'job_type': 'Office Work',
         'gender': 'Male',
         'resp_1_a': 'Grand Parent(s)',
@@ -167,46 +169,82 @@ if enrollee_id:
 
         email = st.text_input('Input a Valid Email Address', st.session_state.user_data['email'])
         mobile_num = st.text_input('Input a Valid Mobile Number', st.session_state.user_data['mobile_num'])
+        gender = st.radio('Sex', options=['Male', 'Female'], index=['Male', 'Female'].index(st.session_state.user_data['gender']))
         job_type = st.selectbox('Job Type', options=['Office Work', 'Field Work', 'Both', 'None'], index=['Office Work', 'Field Work', 'Both', 'None'].index(st.session_state.user_data['job_type']))
         # age = st.number_input('Your Current Age', value=st.session_state.user_data['age'])
         state = st.selectbox('Your Current Location', options=wellness_providers['STATE'].unique())
-        available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'Provider'].unique()
+        available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
         selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
-        gender = st.radio('Sex', options=['Male', 'Female'], index=['Male', 'Female'].index(st.session_state.user_data['gender']))
+        
 
-        if age >= 30 and gender == 'Female':
+        if age >= 40 and gender == 'Female':
             benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Ray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test, Cervical Smear'
         elif age >= 40 and gender == 'Male':
             benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Ray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test, Prostrate Specific Antigen'
         else:
             benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Rray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test'
             
-        if state == 'LAGOS':
-            current_date = dt.date.today()
-            # Define the maximum date as '2023-12-18' as a datetime.date object
-            max_date = dt.date(2023, 12, 18)
-            # Display a date picker
-            selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
-            selected_date_str = selected_date.strftime('%Y-%m-%d')
+        if state == 'LAGOS ':
+            if selected_provider == 'UBA Head Office - Marina, Lagos Island.':
+                st.info('Fill the questionaire below to complete your wellness booking')
+                selected_date_str = ''
+                session = ''
+            elif selected_provider == 'UBA FESTAC Branch.':
+                current_date = dt.date.today()
+                # Define the maximum date as '2023-12-18' as a datetime.date object
+                max_date = dt.date(2023, 12, 1)
+                # Display a date picker
+                selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
+                selected_date_str = selected_date.strftime('%Y-%m-%d')
 
-            booked_sessions_from_db = filled_wellness_df.loc[(filled_wellness_df['selected_date'] == selected_date_str) &
-                                                             (filled_wellness_df['selected_provider'] == selected_provider),
-                                                               'selected_session'].values.tolist()
+                booked_sessions_from_db = filled_wellness_df.loc[(filled_wellness_df['selected_date'] == selected_date_str) &
+                                                                (filled_wellness_df['selected_provider'] == selected_provider),
+                                                                'selected_session'].values.tolist()
 
-            available_sessions = ['08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM']
-             # Create a dictionary to keep track of the number of bookings for each session
-            session_bookings_count = {session: booked_sessions_from_db.count(session) for session in available_sessions}
+                available_sessions = ['09:00 AM - 10:00 AM', '10:00 AM - 11:00 AM', '11:00 AM - 12:00PM', '12:00 PM - 1:00 PM', '01:00 PM - 02:00 PM', '02:00 PM - 03:00 PM']
+                # Create a dictionary to keep track of the number of bookings for each session
+                session_bookings_count = {session: booked_sessions_from_db.count(session) for session in available_sessions}
 
-            # Filter available sessions to only include those with less than 3 bookings
-            available_sessions = [session for session in available_sessions if session_bookings_count[session] < 3]
-            st.info('Please note that the Facilities are opened between the 8:00 am and 5:00 pm, Monday - Friday and 8:00 am - 2:00 pm on \
-                    Saturdays.\n\n If you notice any missing session between their opening hours, this implies that the missing session has been\
-                     fully booked and no longer available for the selected date')
+                # Filter available sessions to only include those with less than 3 bookings
+                available_sessions = [session for session in available_sessions if session_bookings_count[session] < 6]
+                st.info('Please note that the Festac Wellness Venue is a temporary arrangement and will only be available between 09:00 AM and 03:00 PM, Monday - Friday.\
+                        \n\n If you notice any missing session between their opening hours, this implies that the missing session has been\
+                        fully booked and no longer available for the selected date.')
 
-            if not available_sessions:
-                st.warning("All sessions for the selected date at this facility are fully booked. Please select another date or facility.")
-            else:
-                session = st.radio('Select your preferred time from the list of available sessions below', options=available_sessions)
+                if not available_sessions:
+                    st.warning("All sessions for the selected date at this facility are fully booked. Please select another date or facility.")
+                else:
+                    session = st.radio('Select your preferred time from the list of available sessions below', options=available_sessions)
+                    st.info('Fill the questionaire below to complete your wellness booking')
+            else:        
+                current_date = dt.date.today()
+                # Define the maximum date as '2023-12-18' as a datetime.date object
+                max_date = dt.date(2023, 12, 18)
+                # Display a date picker
+                selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
+                selected_date_str = selected_date.strftime('%Y-%m-%d')
+
+                booked_sessions_from_db = filled_wellness_df.loc[(filled_wellness_df['selected_date'] == selected_date_str) &
+                                                                (filled_wellness_df['selected_provider'] == selected_provider),
+                                                                'selected_session'].values.tolist()
+
+                available_sessions = ['08:00 AM - 09:00 AM', '09:00 AM - 10:00 AM', '10:00 AM - 11:00 AM', '11:00 AM - 12:00 PM',
+                                       '12:00 PM - 01:00 PM', '01:00 PM - 02:00 PM', '02:00 PM - 03:00 PM', '03:00 PM - 04:00 PM']
+                # Create a dictionary to keep track of the number of bookings for each session
+                session_bookings_count = {session: booked_sessions_from_db.count(session) for session in available_sessions}
+
+                # Filter available sessions to only include those with less than 3 bookings
+                available_sessions = [session for session in available_sessions if session_bookings_count[session] < 3]
+                st.info('Please note that the Facilities are opened between the 8:00 am and 5:00 pm, Monday - Friday and 8:00 am - 2:00 pm on \
+                        Saturdays.\n\n If you notice any missing session between their opening hours, this implies that the missing session has been\
+                        fully booked and no longer available for the selected date')
+                
+                if not available_sessions:
+                    st.warning("All sessions for the selected date at this facility are fully booked. Please select another date or facility.")
+                else:
+                    session = st.radio('Select your preferred time from the list of available sessions below', options=available_sessions)
+                    st.info('Fill the questionaire below to complete your wellness booking')
+
 
         else:
             current_date = dt.date.today()
@@ -214,6 +252,7 @@ if enrollee_id:
             selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
             selected_date_str = selected_date.strftime('%Y-%m-%d')
             session = ''
+            st.info('Fill the questionaire below to complete your wellness booking')
 
         # Define a list of Family Medical History Conditions
         questions1 = [
@@ -483,7 +522,7 @@ if enrollee_id:
             try:
                 # Define an SQL INSERT statement to add data to your database table
                 insert_query = """
-                INSERT INTO enrollee_test_data_from_portal (MemberNo, MemberName, client, policy, email, mobile_num, job_type, age, state, selected_provider,
+                INSERT INTO [dbo].[2023_uba_annual_wellness_data] (MemberNo, MemberName, client, policy, email, mobile_num, job_type, age, state, selected_provider,
                 sex, wellness_benefits, selected_date, selected_session,
                 [resp_1_a],[resp_1_b],[resp_1_c],[resp_1_d],[resp_1_e],[resp_1_f],[resp_1_g],[resp_1_h],[resp_1_i],[resp_1_j],[resp_1_k],[resp_2_a],
                 [resp_2_b],[resp_2_c],[resp_2_d],[resp_2_e],[resp_2_f],[resp_2_g],[resp_2_h],[resp_2_i],[resp_3_a],[resp_3_b],[resp_3_c],[resp_3_d],
@@ -601,9 +640,9 @@ if enrollee_id:
 
                 table_html += "</table>" #close the table
 
-                #customised text for 
+                #customised text for upcountry
                 text_after_table = f'''
-                <br>Kindly note that this wellness activation is only valid till the 18th of December, 2023.<br><br>
+                <br>Kindly note that this wellness activation is only valid till the 15th of December, 2023.<br><br>
                 Also, note that you will be required to:<br><br>
 
                 -Present at the hospital with your Avon member ID number ({enrollee_id})/ Ecard.<br>
@@ -628,7 +667,7 @@ if enrollee_id:
 
                 #customised text for Lagos enrollees
                 text_after_table1 = f'''
-                <br>Kindly note that this wellness activation is only valid till the end of the year 2023.<br><br>
+                <br>Kindly note that this wellness activation is only valid till the 15th of December, 2023.<br><br>
                 Also, note that you will be required to:<br><br>
 
                 -Present at the hospital with your Avon member ID number ({enrollee_id})/ Ecard.<br>
@@ -647,12 +686,50 @@ if enrollee_id:
                 Medical Services.<br>
 
                 '''
+                head_office_msg = f'''
+                Dear {enrollee_name},<br><br>
+                We hope you are staying safe.<br><br>
+                You have been scheduled for a wellness screening at {selected_provider}.<br><br>
+                Find listed below your wellness benefits:<br><br><b>{benefits}</b>.<br><br>
+                Kindly note the following regarding your wellness appointment:<br><br>
+                - HR will reach out to you with a scheduled date and time for your annual wellness.<br><br>
+                - Once scheduled, you are to present your Avon HMO ID card or member ID - {enrollee_id} at the point of accessing your annual wellness check.<br><br>
+                - The wellness exercise will take place at the designated floor which will be communicated to you by the HR between 9 am and 4 pm from Monday – Friday. <br><br>
+                - For the most accurate fasting blood sugar test results, it is advisable for blood tests to be done before 10am. <br><br>
+                - Staff results will be sent to the email addresses provided by them to the wellness providers.<br><br>
+                - There will be consultation with a physician to review immediate test results on-site while other test results that are not readily available will be reviewed by a physician at your Primary Care Provider.<br><br>
+                
+                Should you require assistance at any time or wish to make any complaint about the service rendered during this wellness exercise,
+                please contact our Call-Center at 0700-277-9800 or send us a chat on WhatsApp at 0912-603-9532.
+                You can also send us an email at callcentre@avonhealthcare.com. Please be assured that an agent would always be on standby to assist you.<br><br>
+                Thank you for choosing Avon HMO.<br><br>
+                Medical Services.<br>
+                '''
 
-                message = msg_befor_table + table_html + text_after_table
-                message1 = msg_befor_table + table_html + text_after_table1
+                festac_msg = f'''
+                Kindly note the following regarding your wellness appointment:<br><br>
+                - The wellness exercise at this venue is only valid till Friday, 1st December, 2023.<br><br>
+                - You are to present your Avon HMO ID card or member ID - {enrollee_id} at the point of accessing your annual wellness check.<br><br>
+                - The wellness exercise will take place at a designated location within the UBA Festac branch between 9 am and 3 pm from Monday – Friday. <br><br>
+                - For the most accurate fasting blood sugar test results, it is advisable for blood tests to be done before 10am. <br><br>
+                - Staff results will be sent to the email addresses provided by them to the wellness providers.<br><br>
+                - There will be consultation with a physician to review immediate test results on-site while other test results that are not readily available will be reviewed by a physician at your Primary Care Provider.<br><br>
+                
+                Should you require assistance at any time or wish to make any complaint about the service rendered during this wellness exercise,
+                please contact our Call-Center at 0700-277-9800 or send us a chat on WhatsApp at 0912-603-9532.
+                You can also send us an email at callcentre@avonhealthcare.com. Please be assured that an agent would always be on standby to assist you.<br><br>
+                Thank you for choosing Avon HMO.<br><br>
+                Medical Services.<br>
+                '''
+
+
+                upcountry_message = msg_befor_table + table_html + text_after_table
+                cerba_message = msg_befor_table + table_html + text_after_table1
+                festac_office_msg = msg_befor_table + table_html + festac_msg
                 myemail = 'noreply@avonhealthcare.com'
                 password = os.environ.get('emailpassword')
-                cc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'adebola.adesoyin@avonhealthcare.com']
+                bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
+                                 'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com']
                 to_email_list =[recipient_email]
                 # myemail = 'ademola.atolagbe@avonhealthcare.com'
                 # password = 'ndbxxttqzvrrpywq'
@@ -668,14 +745,20 @@ if enrollee_id:
                     msg = MIMEMultipart()
                     msg['From'] = 'AVON HMO Client Services'
                     msg['To'] = recipient_email
-                    msg['Cc'] = ', '.join(cc_email_list)
+                    msg['Bcc'] = ', '.join(bcc_email_list)
                     msg['Subject'] = subject
-                    if state == 'LAGOS':
-                        msg.attach(MIMEText(message1, 'html'))
+                    if state == 'LAGOS ':
+                        if selected_provider == 'UBA Head Office - Marina, Lagos Island.':
+                            msg.attach(MIMEText(head_office_msg, 'html'))
+                        elif selected_provider == 'UBA FESTAC Branch.':
+                            msg.attach(MIMEText(festac_office_msg, 'html'))
+                        else:
+                            msg.attach(MIMEText(cerba_message, 'html'))
+                    
                     else:
-                        msg.attach(MIMEText(message, 'html'))
+                        msg.attach(MIMEText(upcountry_message, 'html'))
 
-                    all_recipients = to_email_list + cc_email_list
+                    all_recipients = to_email_list + bcc_email_list
                     #send the email
                     server.sendmail(myemail, all_recipients, msg.as_string())
                     server.quit()
