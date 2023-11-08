@@ -189,33 +189,33 @@ if enrollee_id:
                 st.info('Fill the questionaire below to complete your wellness booking')
                 selected_date_str = ''
                 session = ''
-            elif selected_provider == 'UBA FESTAC Branch.':
-                current_date = dt.date.today()
-                # Define the maximum date as '2023-12-18' as a datetime.date object
-                max_date = dt.date(2023, 12, 1)
-                # Display a date picker
-                selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
-                selected_date_str = selected_date.strftime('%Y-%m-%d')
+            # elif selected_provider == 'UBA FESTAC Branch.':
+            #     current_date = dt.date.today()
+            #     # Define the maximum date as '2023-12-18' as a datetime.date object
+            #     max_date = dt.date(2023, 12, 1)
+            #     # Display a date picker
+            #     selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
+            #     selected_date_str = selected_date.strftime('%Y-%m-%d')
 
-                booked_sessions_from_db = filled_wellness_df.loc[(filled_wellness_df['selected_date'] == selected_date_str) &
-                                                                (filled_wellness_df['selected_provider'] == selected_provider),
-                                                                'selected_session'].values.tolist()
+            #     booked_sessions_from_db = filled_wellness_df.loc[(filled_wellness_df['selected_date'] == selected_date_str) &
+            #                                                     (filled_wellness_df['selected_provider'] == selected_provider),
+            #                                                     'selected_session'].values.tolist()
 
-                available_sessions = ['09:00 AM - 10:00 AM', '10:00 AM - 11:00 AM', '11:00 AM - 12:00PM', '12:00 PM - 1:00 PM', '01:00 PM - 02:00 PM', '02:00 PM - 03:00 PM']
-                # Create a dictionary to keep track of the number of bookings for each session
-                session_bookings_count = {session: booked_sessions_from_db.count(session) for session in available_sessions}
+            #     available_sessions = ['09:00 AM - 10:00 AM', '10:00 AM - 11:00 AM', '11:00 AM - 12:00PM', '12:00 PM - 1:00 PM', '01:00 PM - 02:00 PM', '02:00 PM - 03:00 PM']
+            #     # Create a dictionary to keep track of the number of bookings for each session
+            #     session_bookings_count = {session: booked_sessions_from_db.count(session) for session in available_sessions}
 
-                # Filter available sessions to only include those with less than 3 bookings
-                available_sessions = [session for session in available_sessions if session_bookings_count[session] < 6]
-                st.info('Please note that the Festac Wellness Venue is a temporary arrangement and will only be available between 09:00 AM and 03:00 PM, Monday - Friday.\
-                        \n\n If you notice any missing session between their opening hours, this implies that the missing session has been\
-                        fully booked and no longer available for the selected date.')
+            #     # Filter available sessions to only include those with less than 3 bookings
+            #     available_sessions = [session for session in available_sessions if session_bookings_count[session] < 6]
+            #     st.info('Please note that the Festac Wellness Venue is a temporary arrangement and will only be available between 09:00 AM and 03:00 PM, Monday - Friday.\
+            #             \n\n If you notice any missing session between their opening hours, this implies that the missing session has been\
+            #             fully booked and no longer available for the selected date.')
 
-                if not available_sessions:
-                    st.warning("All sessions for the selected date at this facility are fully booked. Please select another date or facility.")
-                else:
-                    session = st.radio('Select your preferred time from the list of available sessions below', options=available_sessions)
-                    st.info('Fill the questionaire below to complete your wellness booking')
+            #     if not available_sessions:
+            #         st.warning("All sessions for the selected date at this facility are fully booked. Please select another date or facility.")
+            #     else:
+            #         session = st.radio('Select your preferred time from the list of available sessions below', options=available_sessions)
+            #         st.info('Fill the questionaire below to complete your wellness booking')
             else:        
                 current_date = dt.date.today()
                 # Define the maximum date as '2023-12-18' as a datetime.date object
@@ -401,15 +401,15 @@ if enrollee_id:
             'i. My cholesterol level is within the normal range',
             'j. I easily make decisions without worry',
             'k. I enjoy more than 5 hours of sleep at night',
-            'l. I enjoyed my work and life',
-            'm. I enjoyed the support from friends and family',
+            'l. I enjoy my work and life',
+            'm. I enjoy the support from friends and family',
             'n. I feel bad about myself or that I am a failure or have let myself or my family down',
             'o. I have poor appetite or I am over-eating',
             'p. I feel down, depressed, hopeless, tired or have little energy',
             'q. I have trouble falling asleep, staying asleep, or sleeping too much',
             'r. I have no interest or pleasure in doing things',
             's. I have trouble concentrating on things, such as reading the newspaper, or watching TV',
-            't. Thought that I would be better off dead or better off hurting myself in some way',
+            't. I think I would be better off dead or better off hurting myself in some way',
         ]
 
         # Define the generic options for these set of questions
@@ -444,15 +444,15 @@ if enrollee_id:
         resp_4_i = user_responses4['i. My cholesterol level is within the normal range']
         resp_4_j = user_responses4['j. I easily make decisions without worry']
         resp_4_k = user_responses4['k. I enjoy more than 5 hours of sleep at night']
-        resp_4_l = user_responses4['l. I enjoyed my work and life']
-        resp_4_m = user_responses4['m. I enjoyed the support from friends and family']
+        resp_4_l = user_responses4['l. I enjoy my work and life']
+        resp_4_m = user_responses4['m. I enjoy the support from friends and family']
         resp_4_n = user_responses4['n. I feel bad about myself or that I am a failure or have let myself or my family down']
         resp_4_o = user_responses4['o. I have poor appetite or I am over-eating']
         resp_4_p = user_responses4['p. I feel down, depressed, hopeless, tired or have little energy']
         resp_4_q = user_responses4['q. I have trouble falling asleep, staying asleep, or sleeping too much']
         resp_4_r = user_responses4['r. I have no interest or pleasure in doing things']
         resp_4_s = user_responses4['s. I have trouble concentrating on things, such as reading the newspaper, or watching TV']
-        resp_4_t = user_responses4['t. Thought that I would be better off dead or better off hurting myself in some way']
+        resp_4_t = user_responses4['t. I think I would be better off dead or better off hurting myself in some way']
         
 
         # Submit button
@@ -750,8 +750,8 @@ if enrollee_id:
                     if state == 'LAGOS ':
                         if selected_provider == 'UBA Head Office - Marina, Lagos Island.':
                             msg.attach(MIMEText(head_office_msg, 'html'))
-                        elif selected_provider == 'UBA FESTAC Branch.':
-                            msg.attach(MIMEText(festac_office_msg, 'html'))
+                        # elif selected_provider == 'UBA FESTAC Branch.':
+                        #     msg.attach(MIMEText(festac_office_msg, 'html'))
                         else:
                             msg.attach(MIMEText(cerba_message, 'html'))
                     
