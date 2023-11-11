@@ -187,7 +187,7 @@ if enrollee_id:
         if state == 'LAGOS ':
             if selected_provider == 'UBA Head Office - Marina, Lagos Island.':
                 st.info('Fill the questionaire below to complete your wellness booking')
-                selected_date_str = ''
+                selected_date_str = 'To be Communicated by the HR'
                 session = ''
             # elif selected_provider == 'UBA FESTAC Branch.':
             #     current_date = dt.date.today()
