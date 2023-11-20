@@ -41,9 +41,7 @@ conn = pyodbc.connect(
 #         +st.secrets['password']
 #         )
 
-query1 = "SELECT * from vw_wellness_enrollee_portal\
-            where client = 'UNITED BANK FOR AFRICA'\
-                "
+query1 = "SELECT * from vw_wellness_enrollee_portal"
 query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, Wellness_benefits, selected_date, selected_session, date_submitted\
             FROM [dbo].[2023_uba_annual_wellness_data]'
 query3 = 'select * from wellness_providers'
