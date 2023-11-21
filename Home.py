@@ -522,10 +522,21 @@ if enrollee_id:
                 insert_query = """
                 INSERT INTO [dbo].[2023_uba_annual_wellness_data] (MemberNo, MemberName, client, policy, email, mobile_num, job_type, age, state, selected_provider,
                 sex, wellness_benefits, selected_date, selected_session,
-                [resp_1_a],[resp_1_b],[resp_1_c],[resp_1_d],[resp_1_e],[resp_1_f],[resp_1_g],[resp_1_h],[resp_1_i],[resp_1_j],[resp_1_k],[resp_2_a],
-                [resp_2_b],[resp_2_c],[resp_2_d],[resp_2_e],[resp_2_f],[resp_2_g],[resp_2_h],[resp_2_i],[resp_3_a],[resp_3_b],[resp_3_c],[resp_3_d],
-                [resp_3_e],[resp_3_f],[resp_4_a],[resp_4_b],[resp_4_c],[resp_4_d],[resp_4_e],[resp_4_f],[resp_4_g],[resp_4_h],[resp_4_i],[resp_4_j],
-                [resp_4_k],[resp_4_l],[resp_4_m],[resp_4_n],[resp_4_o],[resp_4_p],[resp_4_q],[resp_4_r],[resp_4_s],[resp_4_t], date_submitted)
+                [HIGH BLOOD PRESSURE - Family],[Diabetes - Family],[Cancer - Family],[Asthma - Family],[Arthritis - Family]
+                ,[High Cholesterol],[Heart Attack - Family],[Epilepsy - Family],[Tuberclosis - Family],[Substance Dependency - Family]
+                ,[Mental Illness - Family],[HIGH BLOOD PRESSURE - Personal],[Diabetes - Personal],[Cancer - Personal],[Asthma - Personal]
+                ,[Ulcer - Personal],[Poor Vision - Personal],[Allergy - Personal],[Arthritis/Low Back Pain - Personal],[Anxiety/Depression - Personal]
+                ,[CEASAREAN SECTION],[FRACTURE REPAIR],[HERNIA],[LUMP REMOVAL] ,[APPENDICETOMY],[SPINE SURGERY],[I AVOID EATING FOODS THAT ARE HIGH IN FAT]
+                ,[I AVOID THE USE OR MINIMISE MY EXPOSURE TO ALCOHOL],[I AVOID THE USE OF TOBACCO PRODUCTS],[I AM PHYSICALLY FIT AND EXERCISE AT LEAST 30 MINUTES EVERY DAY]
+                ,[I EAT VEGETABLES AND FRUITS AT LEAST 3 TIMES WEEKLY],[I DRINK 6-8 GLASSES OF WATER A DAY],[I MAINTAIN MY WEIGHT WITHIN THE RECOMMENDATION FOR MY WEIGHT, AGE AND HEIGHT]
+                ,[MY BLOOD PRESSURE IS WITHIN NORMAL RANGE WITHOUT THE USE OF DRUGS],[MY CHOLESTEROL LEVEL IS WITHIN THE NORMAL RANGE]
+                ,[I EASILY MAKE DECISIONS WITHOUT WORRY],[I ENJOY MORE THAN 5 HOURS OF SLEEP AT NIGHT],[I ENJOY MY WORK AND LIFE]
+                ,[I ENJOY THE SUPPORT FROM FRIENDS AND FAMILY],[I FEEL BAD ABOUT MYSELF OR THAT I AM A FAILURE OR HAVE LET MYSELF OR MY FAMILY DOWN]
+                ,[I HAVE POOR APPETITE OR I AM OVER-EATING],[I FEEL DOWN, DEPRESSED, HOPELESS, TIRED OR HAVE LITTLE ENERGY]
+                ,[I HAVE TROUBLE FALLING ASLEEP, STAYING ASLEEP, OR SLEEPING TOO MUCH],[I HAVE NO INTEREST OR PLEASURE IN DOING THINGS]
+                ,[I HAVE TROUBLE CONCENTRATING ON THINGS, SUCH AS READING THE NEWSPAPER, OR WATCHING TV]
+                ,[THOUGHT THAT I WOULD BE BETTER OFF DEAD OR BETTER OFF HURTING MYSELF IN SOME WAY]
+                date_submitted)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """
 
