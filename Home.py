@@ -152,7 +152,7 @@ if enrollee_id:
         enrollee_name = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'membername'].values[0]
         client = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'Client'].values[0]
         policy = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyName'].values[0]
-        # benefits = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'WellnessPackage'].values[0]
+        package = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'WellnessPackage'].values[0]
         age = int(wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'Age'].values[0])
         
         st.info(f"Dear {enrollee_name}.\n \n Kindly confirm that your enrollment details matches with the info displayed below.\
@@ -171,49 +171,54 @@ if enrollee_id:
         job_type = st.selectbox('Job Type', options=['Office Work', 'Field Work', 'Both', 'None'], index=['Office Work', 'Field Work', 'Both', 'None'].index(st.session_state.user_data['job_type']))
         # age = st.number_input('Your Current Age', value=st.session_state.user_data['age'])
         state = st.selectbox('Your Current Location', options=wellness_providers['STATE'].unique())
-        available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
-        selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
-        
-
-        if age >= 40 and gender == 'Female':
-            benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Ray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test, Cervical Smear'
-        elif age >= 40 and gender == 'Male':
-            benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Ray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test, Prostrate Specific Antigen'
+        if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS ':
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=['CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja', 'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I', 'UBA Head Office - Marina, Lagos Island.'])
         else:
+            available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+        
+        if client == 'UNITED BANK FOR AFRICA' and age >= 40 and gender == 'Female':
+            benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Ray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test, Cervical Smear'
+        elif client == 'UNITED BANK FOR AFRICA' and age >= 40 and gender == 'Male':
+            benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Ray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test, Prostrate Specific Antigen'
+        elif client == 'UNITED BANK FOR AFRICA' and age < 40:
             benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Rray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test'
-            
+        else:
+            benefits = package
+
         if state == 'LAGOS ':
             if selected_provider == 'UBA Head Office - Marina, Lagos Island.':
                 st.info('Fill the questionaire below to complete your wellness booking')
                 selected_date_str = 'To be Communicated by the HR'
                 session = ''
-            # elif selected_provider == 'UBA FESTAC Branch.':
-            #     current_date = dt.date.today()
-            #     # Define the maximum date as '2023-12-18' as a datetime.date object
-            #     max_date = dt.date(2023, 12, 1)
-            #     # Display a date picker
-            #     selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
-            #     selected_date_str = selected_date.strftime('%Y-%m-%d')
 
-            #     booked_sessions_from_db = filled_wellness_df.loc[(filled_wellness_df['selected_date'] == selected_date_str) &
-            #                                                     (filled_wellness_df['selected_provider'] == selected_provider),
-            #                                                     'selected_session'].values.tolist()
+                # elif selected_provider == 'UBA FESTAC Branch.':
+                #     current_date = dt.date.today()
+                #     # Define the maximum date as '2023-12-18' as a datetime.date object
+                #     max_date = dt.date(2023, 12, 1)
+                #     # Display a date picker
+                #     selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
+                #     selected_date_str = selected_date.strftime('%Y-%m-%d')
 
-            #     available_sessions = ['09:00 AM - 10:00 AM', '10:00 AM - 11:00 AM', '11:00 AM - 12:00PM', '12:00 PM - 1:00 PM', '01:00 PM - 02:00 PM', '02:00 PM - 03:00 PM']
-            #     # Create a dictionary to keep track of the number of bookings for each session
-            #     session_bookings_count = {session: booked_sessions_from_db.count(session) for session in available_sessions}
+                #     booked_sessions_from_db = filled_wellness_df.loc[(filled_wellness_df['selected_date'] == selected_date_str) &
+                #                                                     (filled_wellness_df['selected_provider'] == selected_provider),
+                #                                                     'selected_session'].values.tolist()
 
-            #     # Filter available sessions to only include those with less than 3 bookings
-            #     available_sessions = [session for session in available_sessions if session_bookings_count[session] < 6]
-            #     st.info('Please note that the Festac Wellness Venue is a temporary arrangement and will only be available between 09:00 AM and 03:00 PM, Monday - Friday.\
-            #             \n\n If you notice any missing session between their opening hours, this implies that the missing session has been\
-            #             fully booked and no longer available for the selected date.')
+                #     available_sessions = ['09:00 AM - 10:00 AM', '10:00 AM - 11:00 AM', '11:00 AM - 12:00PM', '12:00 PM - 1:00 PM', '01:00 PM - 02:00 PM', '02:00 PM - 03:00 PM']
+                #     # Create a dictionary to keep track of the number of bookings for each session
+                #     session_bookings_count = {session: booked_sessions_from_db.count(session) for session in available_sessions}
 
-            #     if not available_sessions:
-            #         st.warning("All sessions for the selected date at this facility are fully booked. Please select another date or facility.")
-            #     else:
-            #         session = st.radio('Select your preferred time from the list of available sessions below', options=available_sessions)
-            #         st.info('Fill the questionaire below to complete your wellness booking')
+                #     # Filter available sessions to only include those with less than 3 bookings
+                #     available_sessions = [session for session in available_sessions if session_bookings_count[session] < 6]
+                #     st.info('Please note that the Festac Wellness Venue is a temporary arrangement and will only be available between 09:00 AM and 03:00 PM, Monday - Friday.\
+                #             \n\n If you notice any missing session between their opening hours, this implies that the missing session has been\
+                #             fully booked and no longer available for the selected date.')
+
+                #     if not available_sessions:
+                #         st.warning("All sessions for the selected date at this facility are fully booked. Please select another date or facility.")
+                #     else:
+                #         session = st.radio('Select your preferred time from the list of available sessions below', options=available_sessions)
+                #         st.info('Fill the questionaire below to complete your wellness booking')
             else:        
                 current_date = dt.date.today()
                 # Define the maximum date as '2023-12-18' as a datetime.date object
@@ -227,7 +232,7 @@ if enrollee_id:
                                                                 'selected_session'].values.tolist()
 
                 available_sessions = ['08:00 AM - 09:00 AM', '09:00 AM - 10:00 AM', '10:00 AM - 11:00 AM', '11:00 AM - 12:00 PM',
-                                       '12:00 PM - 01:00 PM', '01:00 PM - 02:00 PM', '02:00 PM - 03:00 PM', '03:00 PM - 04:00 PM']
+                                        '12:00 PM - 01:00 PM', '01:00 PM - 02:00 PM', '02:00 PM - 03:00 PM', '03:00 PM - 04:00 PM']
                 # Create a dictionary to keep track of the number of bookings for each session
                 session_bookings_count = {session: booked_sessions_from_db.count(session) for session in available_sessions}
 
@@ -622,7 +627,6 @@ if enrollee_id:
                 recipient_email = email
                 subject = 'AVON ENROLLEE WELLNESS APPOINTMENT CONFIRMATION'
                 # Create a table (HTML format) with some sample data
-                # date = dt.datetime.now()
                 msg_befor_table = f'''
                 Dear {enrollee_name},<br><br>
                 We hope you are staying safe.<br><br>
