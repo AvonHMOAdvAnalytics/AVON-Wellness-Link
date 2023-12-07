@@ -794,8 +794,10 @@ if enrollee_id:
                             msg.attach(MIMEText(head_office_msg, 'html'))
                         # elif selected_provider == 'UBA FESTAC Branch.':
                         #     msg.attach(MIMEText(festac_office_msg, 'html'))
-                        else:
+                        elif (selected_provider == 'CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja') or (selected_provider == 'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I'):
                             msg.attach(MIMEText(cerba_message, 'html'))
+                        else:
+                            msg.attach(MIMEText(upcountry_message, 'html'))
                     elif client == 'PIVOT   GIS LIMITED':
                         if (selected_provider == 'CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja') or (selected_provider == 'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I'):
                             msg.attach(MIMEText(cerba_message, 'html'))   
