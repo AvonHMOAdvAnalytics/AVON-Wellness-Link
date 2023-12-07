@@ -172,7 +172,18 @@ if enrollee_id:
         # age = st.number_input('Your Current Age', value=st.session_state.user_data['age'])
         state = st.selectbox('Your Current Location', options=wellness_providers['STATE'].unique())
         if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS ':
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=['CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja', 'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I', 'UBA Head Office - Marina, Lagos Island.'])
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=['CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor,31 Kodesoh Street, Ikeja',
+                                                                                               'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I',
+                                                                                               'UBA Head Office - Marina, Lagos Island.'])
+        elif client == 'PIVOT   GIS LIMITED' and state == 'LAGOS ':
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', 
+                                             options=['CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja',
+                                                      'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I',
+                                                        'MECURE HEALTHCARE - Debo Industrial Cmpd, Plot 6, Block H, Oshodi Industrial Scheme',
+                                                        'MECURE HEALTHCARE - Niyi Okunubi street, Off Admiralty way. Lekki Phase 1',
+                                                        'CLINIX HEALTHCARE - Plot B, BLK XII, Alhaji Adejumo Avenue, Ilupeju, Lagos',
+                                                        'AFRIGLOBAL MEDICARE LTD - 8, Mobolaji Bank-Anthony Way, Ikeja, Lagos',
+                                                        'AFRIGLOBAL MEDICARE LTD - Plot 1192A Kasumu ekemode street, Victoria Island'])
         else:
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
@@ -186,12 +197,27 @@ if enrollee_id:
         else:
             benefits = package
 
+        if client == 'PIVOT   GIS LIMITED':
+            current_date = dt.date.today()
+            # Define the maximum date as '2023-12-18' as a datetime.date object
+            max_date = dt.date(2023, 12, 31)
+            # Display a date picker
+            selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
+        elif client == 'UNITED BANK FOR AFRICA':
+            current_date = dt.date.today()
+            # Define the maximum date as '2023-12-18' as a datetime.date object
+            max_date = dt.date(2023, 12, 18)
+            # Display a date picker
+            selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
+        else:
+            selected_date = st.date_input('Pick Your Preferred Appointment Date',max_value=dt.date.today())
+
+
         if state == 'LAGOS ':
             if selected_provider == 'UBA Head Office - Marina, Lagos Island.':
                 st.info('Fill the questionaire below to complete your wellness booking')
                 selected_date_str = 'To be Communicated by the HR'
                 session = ''
-
                 # elif selected_provider == 'UBA FESTAC Branch.':
                 #     current_date = dt.date.today()
                 #     # Define the maximum date as '2023-12-18' as a datetime.date object
@@ -219,12 +245,7 @@ if enrollee_id:
                 #     else:
                 #         session = st.radio('Select your preferred time from the list of available sessions below', options=available_sessions)
                 #         st.info('Fill the questionaire below to complete your wellness booking')
-            else:        
-                current_date = dt.date.today()
-                # Define the maximum date as '2023-12-18' as a datetime.date object
-                max_date = dt.date(2023, 12, 18)
-                # Display a date picker
-                selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
+            elif (selected_provider == 'CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja') or (selected_provider == 'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I'):        
                 selected_date_str = selected_date.strftime('%Y-%m-%d')
 
                 booked_sessions_from_db = filled_wellness_df.loc[(filled_wellness_df['selected_date'] == selected_date_str) &
@@ -247,12 +268,12 @@ if enrollee_id:
                 else:
                     session = st.radio('Select your preferred time from the list of available sessions below', options=available_sessions)
                     st.info('Fill the questionaire below to complete your wellness booking')
-
+            else:
+                selected_date_str = selected_date.strftime('%Y-%m-%d')
+                session = ''
+                st.info('Fill the questionaire below to complete your wellness booking')
 
         else:
-            current_date = dt.date.today()
-            max_date = dt.date(2023, 12, 18)
-            selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
             selected_date_str = selected_date.strftime('%Y-%m-%d')
             session = ''
             st.info('Fill the questionaire below to complete your wellness booking')
@@ -680,10 +701,11 @@ if enrollee_id:
 
                 #customised text for Lagos enrollees
                 text_after_table1 = f'''
-                <br>Kindly note that this wellness activation is only valid till the 15th of December, 2023.<br><br>
+                <br>Kindly note that wellness exercise at your selected facility is strictly by appointment and
+                and you are expected to be available at the facility on the appointment date as selected by you.<br><br>
                 Also, note that you will be required to:<br><br>
 
-                -Present at the hospital with your Avon member ID number ({enrollee_id})/ Ecard.<br>
+                -Present at the facility with your Avon member ID number ({enrollee_id})/ Ecard.<br>
                 -Provide the facility with your valid email address to mail your result.<br>
                 -You are advised to be present at your selected facility 15 mins before your scheduled time.<br><br>
                 
@@ -719,26 +741,31 @@ if enrollee_id:
                 Medical Services.<br>
                 '''
 
-                festac_msg = f'''
-                Kindly note the following regarding your wellness appointment:<br><br>
-                - The wellness exercise at this venue is only valid till Friday, 1st December, 2023.<br><br>
-                - You are to present your Avon HMO ID card or member ID - {enrollee_id} at the point of accessing your annual wellness check.<br><br>
-                - The wellness exercise will take place at a designated location within the UBA Festac branch between 9 am and 3 pm from Monday – Friday. <br><br>
-                - For the most accurate fasting blood sugar test results, it is advisable for blood tests to be done before 10am. <br><br>
-                - Staff results will be sent to the email addresses provided by them to the wellness providers.<br><br>
-                - There will be consultation with a physician to review immediate test results on-site while other test results that are not readily available will be reviewed by a physician at your Primary Care Provider.<br><br>
+                pivotgis_msg = f'''
+                <br>Kindly note that this wellness activation is only valid till the 31st of December, 2023.<br><br>
+                Also, note that you will be required to:<br><br>
+
+                -Present at the hospital with your Avon member ID number ({enrollee_id})/ Ecard.<br>
+                -Provide the facility with your valid email address to mail your result.<br>
+                -You are advised to be present at your selected facility 15 mins before your scheduled time.<br><br>
                 
-                Should you require assistance at any time or wish to make any complaint about the service rendered during this wellness exercise,
-                please contact our Call-Center at 0700-277-9800 or send us a chat on WhatsApp at 0912-603-9532.
+                Your results will be strictly confidential and will be sent to you directly via your email. You are advised to review
+                your results with your primary care provider for relevant medical advice.<br><br>
+
+                Should you require assistance at any time or wish to make any complaint about the service at any of the facilities, 
+                please contact our Call-Center at 0700-277-9800  or send us a chat on WhatsApp at 0912-603-9532. 
                 You can also send us an email at callcentre@avonhealthcare.com. Please be assured that an agent would always be on standby to assist you.<br><br>
-                Thank you for choosing Avon HMO.<br><br>
+
+                Thank you for choosing Avon HMO,<br><br>
+
                 Medical Services.<br>
                 '''
 
 
                 upcountry_message = msg_befor_table + table_html + text_after_table
                 cerba_message = msg_befor_table + table_html + text_after_table1
-                festac_office_msg = msg_befor_table + table_html + festac_msg
+                pivot_msg = msg_befor_table + table_html + pivotgis_msg
+            
                 myemail = 'noreply@avonhealthcare.com'
                 password = os.environ.get('emailpassword')
                 bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
@@ -760,14 +787,18 @@ if enrollee_id:
                     msg['To'] = recipient_email
                     msg['Bcc'] = ', '.join(bcc_email_list)
                     msg['Subject'] = subject
-                    if state == 'LAGOS ':
+                    if client == 'UNITED BANK FOR AFRICA':
                         if selected_provider == 'UBA Head Office - Marina, Lagos Island.':
                             msg.attach(MIMEText(head_office_msg, 'html'))
                         # elif selected_provider == 'UBA FESTAC Branch.':
                         #     msg.attach(MIMEText(festac_office_msg, 'html'))
                         else:
                             msg.attach(MIMEText(cerba_message, 'html'))
-                    
+                    elif client == 'PIVOT   GIS LIMITED':
+                        if (selected_provider == 'CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja') or (selected_provider == 'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I'):
+                            msg.attach(MIMEText(cerba_message, 'html'))   
+                        else:
+                            msg.attach(MIMEText(pivot_msg, 'html'))
                     else:
                         msg.attach(MIMEText(upcountry_message, 'html'))
 
