@@ -182,6 +182,8 @@ if enrollee_id:
                                                         'MECURE HEALTHCARE - Debo Industrial Cmpd, Plot 6, Block H, Oshodi Industrial Scheme',
                                                         'MECURE HEALTHCARE - Niyi Okunubi street, Off Admiralty way. Lekki Phase 1',
                                                         'CLINIX HEALTHCARE - Plot B, BLK XII, Alhaji Adejumo Avenue, Ilupeju, Lagos',
+                                                        'CLINIX HEALTHCARE - 132 lagos road, Haruna bus stop, Ikorodu',
+                                                        'CLINIX HEALTHCARE - Dele Orisabiyi Street, Amuwo Odofin',
                                                         'AFRIGLOBAL MEDICARE LTD - 8, Mobolaji Bank-Anthony Way, Ikeja, Lagos',
                                                         'AFRIGLOBAL MEDICARE LTD - Plot 1192A Kasumu ekemode street, Victoria Island'])
         else:
