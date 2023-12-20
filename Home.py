@@ -208,7 +208,7 @@ if enrollee_id:
         elif client == 'UNITED BANK FOR AFRICA':
             current_date = dt.date.today()
             # Define the maximum date as '2023-12-18' as a datetime.date object
-            max_date = dt.date(2023, 12, 18)
+            max_date = dt.date(2023, 12, 31)
             # Display a date picker
             selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
         else:
@@ -773,8 +773,6 @@ if enrollee_id:
                 bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
                                  'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com']
                 to_email_list =[recipient_email]
-                # myemail = 'ademola.atolagbe@avonhealthcare.com'
-                # password = 'ndbxxttqzvrrpywq'
 
                 try:
                     server = smtplib.SMTP('smtp.office365.com', 587)
