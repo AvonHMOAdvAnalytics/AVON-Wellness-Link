@@ -44,7 +44,7 @@ conn = pyodbc.connect(
 query1 = "SELECT * from vw_wellness_enrollee_portal"
 query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, Wellness_benefits, selected_date, selected_session, date_submitted\
             FROM [dbo].[2023_uba_annual_wellness_data]'
-query3 = 'select * from wellness_providers'
+query3 = 'select * from updated_wellness_providers'
 @st.cache_data(ttl = dt.timedelta(hours=12))
 def get_data_from_sql():
     wellness_df = pd.read_sql(query1, conn)
@@ -67,7 +67,7 @@ if 'user_data' not in st.session_state:
         'email': '',
         'mobile_num': '',
         'state': 'ABIA',
-        'selected_provider': 'LIVING WORD MISSION HOSPITAL - 5/7 Umuocham road off Aba- Owerri road Aba',
+        'selected_provider': 'ROSEVINE HOSPITAL  - 73 ABA OWERRI ROAD, ABA',
         'job_type': 'Office Work',
         'gender': 'Male',
         'resp_1_a': 'Grand Parent(s)',
@@ -171,7 +171,7 @@ if enrollee_id:
         job_type = st.selectbox('Job Type', options=['Office Work', 'Field Work', 'Both', 'None'], index=['Office Work', 'Field Work', 'Both', 'None'].index(st.session_state.user_data['job_type']))
         # age = st.number_input('Your Current Age', value=st.session_state.user_data['age'])
         state = st.selectbox('Your Current Location', options=wellness_providers['STATE'].unique())
-        if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS ':
+        if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS':
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=['CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor,31 Kodesoh Street, Ikeja',
                                                                                                'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I',
                                                                                                'UBA Head Office - Marina, Lagos Island.'])
@@ -212,10 +212,11 @@ if enrollee_id:
             # Display a date picker
             selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
         else:
-            selected_date = st.date_input('Pick Your Preferred Appointment Date',max_value=dt.date.today())
+            max_date = dt.date(2024, 2, 29)
+            selected_date = st.date_input('Pick Your Preferred Appointment Date',max_value=max_date)
 
 
-        if state == 'LAGOS ':
+        if state == 'LAGOS':
             if selected_provider == 'UBA Head Office - Marina, Lagos Island.':
                 st.info('Fill the questionaire below to complete your wellness booking')
                 selected_date_str = 'To be Communicated by the HR'
@@ -678,7 +679,7 @@ if enrollee_id:
 
                 #customised text for upcountry
                 text_after_table = f'''
-                <br>Kindly note that this wellness activation is only valid till the 15th of December, 2023.<br><br>
+                <br>Kindly note that this wellness activation is only valid till the 29th of February, 2024.<br><br>
                 Also, note that you will be required to:<br><br>
 
                 -Present at the hospital with your Avon member ID number ({enrollee_id})/ Ecard.<br>
