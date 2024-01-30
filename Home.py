@@ -168,7 +168,7 @@ if enrollee_id:
         email = st.text_input('Input a Valid Email Address', st.session_state.user_data['email'])
         mobile_num = st.text_input('Input a Valid Mobile Number', st.session_state.user_data['mobile_num'])
         gender = st.radio('Sex', options=['Male', 'Female'], index=['Male', 'Female'].index(st.session_state.user_data['gender']))
-        job_type = st.selectbox('Occupation', options=['Desk Work', 'Field Work', 'Both', 'Physical Outdoor Work', 'Physical Indoor Work'], index=['Office Work', 'Field Work', 'Both', 'None'].index(st.session_state.user_data['job_type']))
+        job_type = st.selectbox('Occupation', options=['Desk Work', 'Field Work', 'Both', 'Physical Outdoor Work', 'Physical Indoor Work'], index=['Desk Work', 'Field Work', 'Both', 'Physical Outdoor Work', 'Physical Indoor Work'].index(st.session_state.user_data['job_type']))
         # age = st.number_input('Your Current Age', value=st.session_state.user_data['age'])
         state = st.selectbox('Your Current Location', options=wellness_providers['STATE'].unique())
         if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS':
