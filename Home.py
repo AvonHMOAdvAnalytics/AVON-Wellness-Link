@@ -68,7 +68,7 @@ if 'user_data' not in st.session_state:
         'mobile_num': '',
         'state': 'ABIA',
         'selected_provider': 'ROSEVINE HOSPITAL  - 73 ABA OWERRI ROAD, ABA',
-        'job_type': 'Office Work',
+        'job_type': 'Desk Work',
         'gender': 'Male',
         'resp_1_a': 'Grand Parent(s)',
         'resp_1_b': 'Grand Parent(s)',
@@ -168,7 +168,7 @@ if enrollee_id:
         email = st.text_input('Input a Valid Email Address', st.session_state.user_data['email'])
         mobile_num = st.text_input('Input a Valid Mobile Number', st.session_state.user_data['mobile_num'])
         gender = st.radio('Sex', options=['Male', 'Female'], index=['Male', 'Female'].index(st.session_state.user_data['gender']))
-        job_type = st.selectbox('Job Type', options=['Office Work', 'Field Work', 'Both', 'None'], index=['Office Work', 'Field Work', 'Both', 'None'].index(st.session_state.user_data['job_type']))
+        job_type = st.selectbox('Occupation', options=['Desk Work', 'Field Work', 'Both', 'Physical Outdoor Work', 'Physical Indoor Work'], index=['Office Work', 'Field Work', 'Both', 'None'].index(st.session_state.user_data['job_type']))
         # age = st.number_input('Your Current Age', value=st.session_state.user_data['age'])
         state = st.selectbox('Your Current Location', options=wellness_providers['STATE'].unique())
         if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS':
@@ -221,33 +221,7 @@ if enrollee_id:
                 st.info('Fill the questionaire below to complete your wellness booking')
                 selected_date_str = 'To be Communicated by the HR'
                 session = ''
-                # elif selected_provider == 'UBA FESTAC Branch.':
-                #     current_date = dt.date.today()
-                #     # Define the maximum date as '2023-12-18' as a datetime.date object
-                #     max_date = dt.date(2023, 12, 1)
-                #     # Display a date picker
-                #     selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
-                #     selected_date_str = selected_date.strftime('%Y-%m-%d')
-
-                #     booked_sessions_from_db = filled_wellness_df.loc[(filled_wellness_df['selected_date'] == selected_date_str) &
-                #                                                     (filled_wellness_df['selected_provider'] == selected_provider),
-                #                                                     'selected_session'].values.tolist()
-
-                #     available_sessions = ['09:00 AM - 10:00 AM', '10:00 AM - 11:00 AM', '11:00 AM - 12:00PM', '12:00 PM - 1:00 PM', '01:00 PM - 02:00 PM', '02:00 PM - 03:00 PM']
-                #     # Create a dictionary to keep track of the number of bookings for each session
-                #     session_bookings_count = {session: booked_sessions_from_db.count(session) for session in available_sessions}
-
-                #     # Filter available sessions to only include those with less than 3 bookings
-                #     available_sessions = [session for session in available_sessions if session_bookings_count[session] < 6]
-                #     st.info('Please note that the Festac Wellness Venue is a temporary arrangement and will only be available between 09:00 AM and 03:00 PM, Monday - Friday.\
-                #             \n\n If you notice any missing session between their opening hours, this implies that the missing session has been\
-                #             fully booked and no longer available for the selected date.')
-
-                #     if not available_sessions:
-                #         st.warning("All sessions for the selected date at this facility are fully booked. Please select another date or facility.")
-                #     else:
-                #         session = st.radio('Select your preferred time from the list of available sessions below', options=available_sessions)
-                #         st.info('Fill the questionaire below to complete your wellness booking')
+                
             elif (selected_provider == 'CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja') or (selected_provider == 'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I'):        
                 selected_date_str = selected_date.strftime('%Y-%m-%d')
 
