@@ -68,7 +68,7 @@ if 'user_data' not in st.session_state:
         'mobile_num': '',
         'state': 'ABIA',
         'selected_provider': 'ROSEVINE HOSPITAL  - 73 ABA OWERRI ROAD, ABA',
-        'job_type': 'Desk Work',
+        'job_type': 'Mainly Desk Work',
         'gender': 'Male',
         'resp_1_a': 'Grand Parent(s)',
         'resp_1_b': 'Grand Parent(s)',
@@ -168,7 +168,7 @@ if enrollee_id:
         email = st.text_input('Input a Valid Email Address', st.session_state.user_data['email'])
         mobile_num = st.text_input('Input a Valid Mobile Number', st.session_state.user_data['mobile_num'])
         gender = st.radio('Sex', options=['Male', 'Female'], index=['Male', 'Female'].index(st.session_state.user_data['gender']))
-        job_type = st.selectbox('Occupation', options=['Desk Work', 'Field Work', 'Both', 'Physical Outdoor Work', 'Physical Indoor Work'], index=['Desk Work', 'Field Work', 'Both', 'Physical Outdoor Work', 'Physical Indoor Work'].index(st.session_state.user_data['job_type']))
+        job_type = st.selectbox('Occupation', options=['Mainly Desk Work', 'Mainly Field Work', 'Desk and Field Work', 'Physical Outdoor Work', 'Physical Indoor Work'], index=['Mainly Desk Work', 'Mainly Field Work', 'Desk and Field Work', 'Physical Outdoor Work', 'Physical Indoor Work'].index(st.session_state.user_data['job_type']))
         # age = st.number_input('Your Current Age', value=st.session_state.user_data['age'])
         state = st.selectbox('Your Current Location', options=wellness_providers['STATE'].unique())
         if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS':
