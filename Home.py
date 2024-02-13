@@ -125,7 +125,7 @@ if 'user_data' not in st.session_state:
 # # Define selectbox options and their corresponding indices
 # state_options = ['ABIA', 'ABUJA', 'LAGOS', 'KANO', 'KADUNA', 'OGUN', 'OYO']
 
-enrollee_id = st.text_input('Kindly input your member number to confirm your eligibility')
+enrollee_id = st.text_input('Kindly input your Member ID to confirm your eligibility')
 #add a submit button
 st.button("Submit", key="button1", help="Click or press Enter")
 enrollee_id = str(enrollee_id)
