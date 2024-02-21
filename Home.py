@@ -630,26 +630,61 @@ if enrollee_id:
                 We hope you are staying safe.<br><br>
                 You have been scheduled for a wellness screening at your selected provider, see the below table for details.<br><br>
                 '''
+                #create a table with the booking information
+                wellness_table = {
+                    "Appointment Date": [selected_date_str + ' - ' + session],
+                    "Wellness Facility": [selected_provider],
+                    "Wellness Benefits": [benefits]
+                }
+
+                #convert the wellness_table to a html table
+                wellness_table_html = pd.DataFrame(wellness_table).to_html(index=False, escape=False, justify='center')
 
                 #initialise an empty table
-                table_html = """
-                <table border="1">
-                <tr>
-                    <th>Appointment Date</th>
-                    <th>Wellness Facility</th>
-                    <th>Wellness Benefits</th>
-                </tr>
+                table_html = f"""
+                <style>
+                table {{
+                        border: 1px solid #1C6EA4;
+                        background-color: #EEEEEE;
+                        width: 100%;
+                        text-align: left;
+                        border-collapse: collapse;
+                        }}
+                        table td, table th {{
+                        border: 1px solid #AAAAAA;
+                        padding: 3px 2px;
+                        }}
+                        table tbody td {{
+                        font-size: 13px;
+                        }}
+                        table thead {{
+                        background: #59058D;
+                        border-bottom: 2px solid #444444;
+                        }}
+                        table thead th {{
+                        font-size: 15px;
+                        font-weight: bold;
+                        color: #FFFFFF;
+                        border-left: 2px solid #D0E4F5;
+                        }}
+                        table thead th:first-child {{
+                        border-left: none;
+                        }}
+                </style>
+                <table>
+                {wellness_table_html}
+                </table>
                 """
 
-                table_html += f"""
-                <tr>
-                    <td>{selected_date_str} - {session}</td>
-                    <td>{selected_provider}</td>
-                    <td>{benefits}</td>
-                </tr>
-                """
+                # table_html += f"""
+                # <tr>
+                #     <td>{selected_date_str} - {session}</td>
+                #     <td>{selected_provider}</td>
+                #     <td>{benefits}</td>
+                # </tr>
+                # """
 
-                table_html += "</table>" #close the table
+                # table_html += "</table>" #close the table
 
                 #customised text for upcountry
                 text_after_table = f'''
@@ -738,6 +773,74 @@ if enrollee_id:
                 Medical Services.<br>
                 '''
 
+                # html_string = f'''<!DOCTYPE html>
+                #     <html lang="en">
+                #     <head>
+                #         <meta charset="UTF-8">
+                #         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                #         <title>Email Message</title>
+                #         <style>
+                #             /* Define your styles here */
+
+                #             .email-container {{
+                #                 max-width: 600px;
+                #                 margin: 0 auto;
+                #                 padding: 20px;
+                #                 border: 1px solid #ccc;
+                #                 border-radius: 10px;
+                #             }}
+                #             .company-logo {{
+                #                 max-width: 150px;
+                #                 height: auto;
+                #                 margin-bottom: 20px;
+                #             }}
+                #             .table-container {{
+                #                 border: 1px solid #1C6EA4;
+                #                 background-color: #EEEEEE;
+                #                 width: 100%;
+                #                 text-align: left;
+                #                 border-collapse: collapse;
+                #                 margin-bottom: 20px;
+                #             }}
+                #             .table-container td, .table-container th {{
+                #                 border: 1px solid #AAAAAA;
+                #                 padding: 3px 2px;
+                #             }}
+                #             .table-container tbody td {{
+                #                 font-size: 13px;
+                #             }}
+                #             .table-container thead {{
+                #                 background: #59058D;
+                #                 border-bottom: 2px solid #444444;
+                #             }}
+                #             .table-container thead th {{
+                #                 font-size: 15px;
+                #                 font-weight: bold;
+                #                 color: #FFFFFF;
+                #                 border-left: 2px solid #D0E4F5;
+                #             }}
+                #             .table-container thead th:first-child {{
+                #                 border-left: none;
+                #             }}
+                #         </style>
+                #     </head>
+                #     <body>
+                #         <div class="email-container">
+                #             <img src="wellness_image.png" alt="Company Logo" class="company-logo">
+                #             <div class="table-container">
+                #                 <!-- Your table HTML goes here -->
+                #                 <table>
+                #                     {wellness_table_html}
+                #                 </table>
+                #             </div>
+                #             <!-- Additional text after the table -->
+                #             <p>{text_after_table}</p>
+                #         </div>
+                #     </body>
+                #     </html>
+                #     '''
+
+                #put the table and text together in a text border with an image added
 
                 upcountry_message = msg_befor_table + table_html + text_after_table
                 cerba_message = msg_befor_table + table_html + text_after_table1
@@ -745,6 +848,7 @@ if enrollee_id:
             
                 myemail = 'noreply@avonhealthcare.com'
                 password = os.environ.get('emailpassword')
+                # password = st.secrets["emailpassword"]
                 bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
                                  'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com']
                 to_email_list =[recipient_email]
