@@ -175,17 +175,24 @@ if enrollee_id:
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=['CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor,31 Kodesoh Street, Ikeja',
                                                                                                'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I',
                                                                                                'UBA Head Office - Marina, Lagos Island.'])
-        elif client == 'PIVOT   GIS LIMITED' and state == 'LAGOS ':
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', 
-                                             options=['CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja',
-                                                      'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I',
-                                                        'MECURE HEALTHCARE - Debo Industrial Cmpd, Plot 6, Block H, Oshodi Industrial Scheme',
-                                                        'MECURE HEALTHCARE - Niyi Okunubi street, Off Admiralty way. Lekki Phase 1',
-                                                        'CLINIX HEALTHCARE - Plot B, BLK XII, Alhaji Adejumo Avenue, Ilupeju, Lagos',
-                                                        'CLINIX HEALTHCARE - 132 lagos road, Haruna bus stop, Ikorodu',
-                                                        'CLINIX HEALTHCARE - Dele Orisabiyi Street, Amuwo Odofin',
-                                                        'AFRIGLOBAL MEDICARE LTD - 8, Mobolaji Bank-Anthony Way, Ikeja, Lagos',
-                                                        'AFRIGLOBAL MEDICARE LTD - Plot 1192A Kasumu ekemode street, Victoria Island'])
+        elif client == 'STANDARD CHARTERED BANK NIGERIA LIMITED' and state == 'LAGOS':
+            available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
+            additional_provider = 'Onsite - SCB Head Office - 142, Ahmadu Bello Way, Victoria Island'
+            available_provider = list(available_provider) + [additional_provider]
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+        
+        elif client == 'STANDARD CHARTERED BANK NIGERIA LIMITED' and state == 'RIVERS ':
+            available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
+            additional_provider = 'Onsite - SCB Office, 143, Port Harcourt Aba Express Road (F-0)'
+            available_provider = list(available_provider) + [additional_provider]
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+
+        elif client == 'STANDARD CHARTERED BANK NIGERIA LIMITED' and state == 'FCT ':
+            available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
+            additional_provider = 'Onsite - SCB Office, 374 Ademola Adetokunbo Crescent Wuse II, Beside Visa/Airtel Building'
+            available_provider = list(available_provider) + [additional_provider]
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+            
         else:
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
@@ -688,8 +695,7 @@ if enrollee_id:
 
                 #customised text for upcountry
                 text_after_table = f'''
-                <br>Kindly note that this wellness activation is only valid till the 29th of February, 2024.<br><br>
-                Also, note that you will be required to:<br><br>
+                <br>Kindly note the following requirements for your wellness exercise:<br><br>
 
                 -Present at the hospital with your Avon member ID number ({enrollee_id})/ Ecard.<br>
                 -Provide the facility with your valid email address to mail your result.<br>
@@ -875,11 +881,6 @@ if enrollee_id:
                             msg.attach(MIMEText(cerba_message, 'html'))
                         else:
                             msg.attach(MIMEText(upcountry_message, 'html'))
-                    elif client == 'PIVOT   GIS LIMITED':
-                        if (selected_provider == 'CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja') or (selected_provider == 'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I'):
-                            msg.attach(MIMEText(cerba_message, 'html'))   
-                        else:
-                            msg.attach(MIMEText(pivot_msg, 'html'))
                     else:
                         msg.attach(MIMEText(upcountry_message, 'html'))
 
