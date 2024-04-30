@@ -530,7 +530,7 @@ if enrollee_id:
             try:
                 # Define an SQL INSERT statement to add data to your database table
                 insert_query = """
-                INSERT INTO [dbo].[2023_uba_annual_wellness_data] (MemberNo, MemberName, client, policy, email, mobile_num, job_type, age, state, selected_provider,
+                INSERT INTO [dbo].[enrollee_annual_wellness_reg_web_portal] (MemberNo, MemberName, client, policy, email, mobile_num, job_type, age, state, selected_provider,
                 sex, wellness_benefits, selected_date, selected_session,
                 [HIGH BLOOD PRESSURE - Family],[Diabetes - Family],[Cancer - Family],[Asthma - Family],[Arthritis - Family]
                 ,[High Cholesterol],[Heart Attack - Family],[Epilepsy - Family],[Tuberclosis - Family],[Substance Dependency - Family]
