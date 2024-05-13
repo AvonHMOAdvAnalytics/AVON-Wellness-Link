@@ -140,12 +140,25 @@ if enrollee_id:
         app_date = filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'selected_date'].values[0]
         app_session = filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'selected_session'].values[0]
         submitted_date = np.datetime_as_string(filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'date_submitted'].values[0], unit='D')
+        #change the submitted_date to date format, add 6 weeks and return the date in this format e.g Wednesday, 31st December 2021
+        six_weeks = dt.datetime.strptime(submitted_date, "%Y-%m-%d").date() + dt.timedelta(weeks=6)
+        six_weeks = six_weeks.strftime('%A, %d %B %Y')
+        # .strftime('%A, %d %B %Y')
+
+        
 
         filled_message = f'Dear {member_name}.\n \n Please note that you have already booked your wellness appointment on {submitted_date}\
               and your booking confirmation has been sent to {member_email} as provided.\n\n Find your booking information below:\n\n Wellness\
                   Facility: {provider}.\n\n Wellness Benefits: {package}.\n\n Appointment Date: {app_date} - {app_session}.\n\n Kindly contact your\
-                      Client Manager if you wish change your booking appointment.\n\n Thank you for choosing AVON HMO'
-        st.info(filled_message,icon="✅")
+                    Client Manager if you wish change your booking appointment.\n\n Note that your annual wellness is only valid till {six_weeks}.\n\n Thank you for choosing AVON HMO.'
+        st.info(f'Dear {member_name}.\n\n'
+                f'Please note that you have already booked your wellness appointment on {submitted_date} and your booking confirmation has been sent to {member_email} as provided\n\n'
+                f'Wellness Facility: {provider}.\n\n'
+                f'Wellness Benefits: {package}.\n\n'
+                f'Appointment Date: {app_date} - {app_session}.\n\n'
+                f'Kindly contact your Client Manager if you wish change your booking appointment.\n\n'
+                f'###Note that your annual wellness is only valid till {six_weeks}.\n\n'
+                ,icon="✅")
         
 
     elif (enrollee_id not in filled_wellness_df['MemberNo'].values) & (enrollee_id in wellness_df['memberno'].values):
@@ -154,10 +167,16 @@ if enrollee_id:
         policy = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyName'].values[0]
         package = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'WellnessPackage'].values[0]
         age = int(wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'Age'].values[0])
+
+        #write a code to assign 6weeks from the current date to a variable
+        six_week_dt = dt.date.today() + dt.timedelta(weeks=6)
+        #convert six_weeks to this date format e.g Wednesday, 31st December 2021
+        six_weeks = six_week_dt.strftime('%A, %d %B %Y')
         
-        st.info(f"Dear {enrollee_name}.\n \n Kindly confirm that your enrollment details matches with the info displayed below.\
-                  \n By proceeding to fill the form below, I understand and hereby acknowledge that my data would be collected\
-                 and processed only for the performance of this wellness screening exercise.",icon="✅")
+        st.info(f'Dear {enrollee_name}.\n\n'
+                f'Kindly confirm that your enrollment details matches with the info displayed below.\n\n'
+                f'By proceeding to fill the form below, I understand and hereby acknowledge that my data would be collected and processed only for the performance of this wellness screening exercise.\n\n'
+                f'### Please note that once you complete this form, you only have till {six_weeks} to complete your wellness check.',icon="✅")
         st.info(f'Company: {client}.\n\n Policy: {policy}.\n\n Please contact your Client Manager if this information does not match with your enrollment details')
 
         # #add a submit button
@@ -619,7 +638,9 @@ if enrollee_id:
                 conn.commit()
 
                 # Provide feedback to the user
-                st.success("Thank you, your annual wellness has been successfully booked")
+                st.info(f'Thank you {enrollee_name}.\n\n'
+                    f'Your annual wellness has been successfully booked.\n\n'
+                    f'###Please note that you have from now till {six_weeks} to complete your annual wellness exercise.')
 
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
@@ -858,8 +879,8 @@ if enrollee_id:
                 #add a condition to use the citron_bcc_list whenever any of the CITRON wellness providers is selected by the enrollee
                 if (selected_provider == 'ECHOLAB - Opposite mararaba medical centre, Tipper Garage, Mararaba') or (selected_provider == 'TOBIS CLINIC - Chief Melford Okilo Road Opposite Sobaz Filling Station, Akenfa –Epie') or (selected_provider == 'ECHOLAB - 375B Nnebisi Road, Umuagu, Asaba'):
                     bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
-                                 'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com', 
-                                 'adeoluwa@citron-health.com', 'fikun@citron-health.com']
+                                'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com', 
+                                'adeoluwa@citron-health.com', 'fikun@citron-health.com']
                 else:
                     bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
                                  'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com']
