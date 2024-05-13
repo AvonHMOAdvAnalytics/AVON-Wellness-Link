@@ -858,11 +858,12 @@ if enrollee_id:
                 #add a condition to use the citron_bcc_list whenever any of the CITRON wellness providers is selected by the enrollee
                 if (selected_provider == 'ECHOLAB - Opposite mararaba medical centre, Tipper Garage, Mararaba') or (selected_provider == 'TOBIS CLINIC - Chief Melford Okilo Road Opposite Sobaz Filling Station, Akenfa –Epie') or (selected_provider == 'ECHOLAB - 375B Nnebisi Road, Umuagu, Asaba'):
                     bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
-                                 'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com']
-                else:
-                    bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
                                  'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com', 
                                  'adeoluwa@citron-health.com', 'fikun@citron-health.com']
+                else:
+                    bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
+                                 'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com']
+                    
                 to_email_list =[recipient_email]
 
                 try:
