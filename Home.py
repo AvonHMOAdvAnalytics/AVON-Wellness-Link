@@ -127,7 +127,7 @@ if 'user_data' not in st.session_state:
 
 enrollee_id = st.text_input('Kindly input your Member ID to confirm your eligibility')
 #add a submit button
-st.button("Submit", key="button1", help="Click or press Enter")
+st.button("Submit", key="button1", help="Click or Press Enter")
 enrollee_id = str(enrollee_id)
 
 if enrollee_id:
@@ -880,7 +880,7 @@ if enrollee_id:
                 if (selected_provider == 'ECHOLAB - Opposite mararaba medical centre, Tipper Garage, Mararaba') or (selected_provider == 'TOBIS CLINIC - Chief Melford Okilo Road Opposite Sobaz Filling Station, Akenfa –Epie') or (selected_provider == 'ECHOLAB - 375B Nnebisi Road, Umuagu, Asaba'):
                     bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
                                 'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com', 
-                                'adeoluwa@citron-health.com', 'fikun@citron-health.com']
+                                'adeoluwa@citron-health.com', 'hello@citron-health.com']
                 else:
                     bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
                                  'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com']
