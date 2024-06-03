@@ -45,7 +45,7 @@ query1 = "SELECT * from vw_wellness_enrollee_portal"
 query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, Wellness_benefits, selected_date, selected_session, date_submitted\
             FROM enrollee_annual_wellness_reg_web_portal'
 query3 = 'select * from updated_wellness_providers'
-@st.cache_data(ttl = dt.timedelta(hours=12))
+@st.cache_data(ttl = dt.timedelta(hours=4))
 def get_data_from_sql():
     wellness_df = pd.read_sql(query1, conn)
     wellness_providers = pd.read_sql(query3, conn)
