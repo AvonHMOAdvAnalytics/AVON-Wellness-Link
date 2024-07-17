@@ -199,6 +199,9 @@ if enrollee_id:
                     conn.commit()
                     st.success('PA Code has been successfully updated for the enrollee')
 
+            else:
+                st.error("Username/password is incorrect")
+
                 #add a logout button
                 if st.button("LOGOUT", help="Click to logout"):
                     st.sidebar.warning("You have been logged out")
