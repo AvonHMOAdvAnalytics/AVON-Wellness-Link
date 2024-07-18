@@ -204,7 +204,7 @@ if enrollee_id:
         if st.session_state.logged_in:
             st.write('Fill the details of the PA issued to Enrollee below to complete the wellness booking for the enrollee')
 
-            with st.form(key='my_form'):
+            with st.form(key='my_form',clear_on_submit=True):
                 pacode = st.text_input('Input the Generated PA Code', value=st.session_state.pacode)
                 pa_tests = st.multiselect('Select the Tests Conducted', options=['Physical Exam', 'Urinalysis', 'PCV', 'Blood Sugar', 'BP', 'Genotype', 'BMI',
                                                                                     'Chest X-Ray', 'Cholesterol', 'Liver Function Test', 'Electrolyte, Urea and Creatinine Test(E/U/Cr)',
