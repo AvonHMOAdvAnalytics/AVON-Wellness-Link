@@ -14,37 +14,37 @@ st.set_page_config(layout='wide')
 image = Image.open('wellness_image_1.png')
 st.image(image, use_column_width=True)
 
-server = os.environ.get('server_name')
-database = os.environ.get('db_name')
-username = os.environ.get('db_username')
-password = os.environ.get('db_password')
-login_username = os.environ.get('userlogin')
-login_password = os.environ.get('login_password')
+# server = os.environ.get('server_name')
+# database = os.environ.get('db_name')
+# username = os.environ.get('db_username')
+# password = os.environ.get('db_password')
+# login_username = os.environ.get('userlogin')
+# login_password = os.environ.get('login_password')
 
 
-conn = pyodbc.connect(
-        'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-        + server
-        +';DATABASE='
-        + database
-        +';UID='
-        + username
-        +';PWD='
-        + password
-        )
-
-# login_username = st.secrets['login_username']
-# login_password = st.secrets['login_password']
 # conn = pyodbc.connect(
 #         'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-#         +st.secrets['server']
+#         + server
 #         +';DATABASE='
-#         +st.secrets['database']
+#         + database
 #         +';UID='
-#         +st.secrets['username']
+#         + username
 #         +';PWD='
-#         +st.secrets['password']
+#         + password
 #         )
+
+login_username = st.secrets['login_username']
+login_password = st.secrets['login_password']
+conn = pyodbc.connect(
+        'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
+        +st.secrets['server']
+        +';DATABASE='
+        +st.secrets['database']
+        +';UID='
+        +st.secrets['username']
+        +';PWD='
+        +st.secrets['password']
+        )
 
 query1 = "SELECT * from vw_wellness_enrollee_portal"
 query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, Wellness_benefits, selected_date, selected_session, date_submitted\
@@ -164,51 +164,83 @@ if enrollee_id:
                 f'###Note that your annual wellness is only valid till {six_weeks}.\n\n'
                 ,icon="✅")
         
-         #create a button to enable contact center agent fill in the details of the generated PA code
-        st.subheader('For Internal Use Only. Kindly Login to Access the PA Authorisation Page')
-        st.sidebar.title("PA Authorisation Page")
-        # st.sidebar.write("Login with your username and password to access the portal.")
-        username = st.sidebar.text_input("Username")
-        password = st.sidebar.text_input("Password", type="password")
+        #check if the user is logged in
+        if 'logged_in' not in st.session_state:
+            st.session_state.logged_in = False
 
-        if st.sidebar.button("Login"):
+        #Initialise form state
+        if 'pacode' not in st.session_state:
+            st.session_state.pacode = ''
+        if 'pa_tests' not in st.session_state:
+            st.session_state.pa_tests = []
+        if 'pa_provider' not in st.session_state:
+            st.session_state.pa_provider = ''
+        if 'pa_issue_date' not in st.session_state:
+            st.session_state.pa_issue_date = dt.date.today()
+
+        #Login form in the sidebar
+        if not st.session_state.logged_in:
+            #create a button to enable contact center agent fill in the details of the generated PA code
+            st.subheader('For Internal Use Only. Kindly Login to Access the PA Authorisation Page')
+            st.sidebar.title("PA Authorisation Page")
+            # st.sidebar.write("Login with your username and password to access the portal.")
+            username = st.sidebar.text_input("Username")
+            password = st.sidebar.text_input("Password", type="password")
+
+        if st.sidebar.button("LOGIN"):
             if username == login_username and password == login_password:
                 st.sidebar.success("Login Successful")
-                st.write('Fill the details of the PA issued to Enrollee below to complete the wellness booking for the enrollee')
-
-                pacode = st.text_input('Input the Generated PA Code')
-                pa_tests = st.multiselect('Select the Tests Conducted', options=['Physical Exam', 'Urinalysis', 'PCV', 'Blood Sugar', 'BP', 'Genotype', 'BMI',
-                                                                                    'Chest X-Ray', 'Cholesterol', 'Liver Function Test', 'Electrolyte, Urea and Creatinine Test(E/U/Cr)',
-                                                                                    'Stool Microscopy', 'Mammogram', 'Prostrate Specific Antigen(PSA)', 'Cervical Smear'])
-                pa_provider = st.selectbox('Select the Wellness Provider', options=wellness_providers['PROVIDER'].unique())
-                pa_issue_date = st.date_input('Select the Date the PA was Issued')
-
-                #add a submit button
-                proceed = st.button("PROCEED", help="Click to proceed")
-                if proceed:
-                    # Convert pa_tests list to a comma-separated string
-                    pa_tests_str = ','.join(pa_tests)
-                    #insert the generated PA code into the enrollee_annual_wellness_reg_web_portal on the database
-                    cursor = conn.cursor()
-                    query = """
-                    UPDATE enrollee_annual_wellness_reg_web_portal
-                    SET IssuedPACode = ?, PA_Tests = ?, PA_Provider = ?, PAIssueDate = ?
-                    WHERE MemberNo = ?
-                    """
-                    cursor.execute(query, pacode, pa_tests_str, pa_provider, pa_issue_date, enrollee_id)
-                    conn.commit()
-                    st.success('PA Code has been successfully updated for the enrollee')
-
+                st.session_state.logged_in = True
+                st.experimental_rerun()
             else:
                 st.error("Username/password is incorrect")
 
-                #add a logout button
-                if st.button("LOGOUT", help="Click to logout"):
-                    st.sidebar.warning("You have been logged out")
-                    st.experimental_rerun()
+        #add a logout button
+        else:
+            if st.sidebar.button("LOGOUT", help="Click to logout"):
+                st.session_state.logged_in = False
+                st.experimental_rerun()
 
+        if st.session_state.logged_in:
+            st.write('Fill the details of the PA issued to Enrollee below to complete the wellness booking for the enrollee')
 
-        
+            with st.form(key='my_form'):
+                pacode = st.text_input('Input the Generated PA Code', value=st.session_state.pacode)
+                pa_tests = st.multiselect('Select the Tests Conducted', options=['Physical Exam', 'Urinalysis', 'PCV', 'Blood Sugar', 'BP', 'Genotype', 'BMI',
+                                                                                    'Chest X-Ray', 'Cholesterol', 'Liver Function Test', 'Electrolyte, Urea and Creatinine Test(E/U/Cr)',
+                                                                                    'Stool Microscopy', 'Mammogram', 'Prostrate Specific Antigen(PSA)', 'Cervical Smear'],
+                                                                                    default=st.session_state.pa_tests)
+                # Convert pa_tests list to a comma-separated string
+                pa_tests_str = ','.join(pa_tests)
+                pa_provider = st.selectbox('Select the Wellness Provider', placeholder='Select Provider', options=['Select Provider'] + list(wellness_providers['PROVIDER'].unique()),
+                                           index=0 if st.session_state.pa_provider == '' else wellness_providers['PROVIDER'].unique().tolist().index(st.session_state.pa_provider) + 1)
+                pa_issue_date = st.date_input('Select the Date the PA was Issued',value=st.session_state.pa_issue_date)
+
+                #add a submit button
+                proceed = st.form_submit_button("PROCEED", help="Click to proceed")
+            if proceed:
+                #insert the generated PA code into the enrollee_annual_wellness_reg_web_portal on the database
+                cursor = conn.cursor()
+                query = """
+                UPDATE enrollee_annual_wellness_reg_web_portal
+                SET IssuedPACode = ?, PA_Tests = ?, PA_Provider = ?, PAIssueDate = ?
+                WHERE MemberNo = ?
+                """
+                cursor.execute(query, pacode, pa_tests_str, pa_provider, pa_issue_date, enrollee_id)
+                conn.commit()
+                st.success('PA Code has been successfully updated for the enrollee')
+
+                #clear the form fields
+                st.session_state.form_submitted = True
+                st.session_state.pacode = ''
+                st.session_state.pa_tests = []
+                st.session_state.pa_provider = ''
+                st.session_state.pa_issue_date = dt.date.today()
+                st.experimental_rerun()
+
+        if 'form_submitted' in st.session_state:
+            if st.session_state.form_submitted:
+                st.session_state.form_submitted = False
 
     elif (enrollee_id not in filled_wellness_df['MemberNo'].values) & (enrollee_id in wellness_df['memberno'].values):
         enrollee_name = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'membername'].values[0]
