@@ -61,7 +61,8 @@ wellness_df, wellness_providers = get_data_from_sql()
 
 filled_wellness_df = pd.read_sql(query2, conn)
 
-wellness_df['memberno'] = wellness_df['memberno'].astype(str)
+wellness_df['memberno'] = wellness_df['memberno'].astype(int).astype(str)
+
 filled_wellness_df['MemberNo'] = filled_wellness_df['MemberNo'].astype(str)
 
 st.subheader('Welcome to AVON HMO Enrollee Annual Wellness Portal \nKindly note that you are only eligible to perform your Wellness check once in a policy year')
@@ -129,8 +130,8 @@ if 'user_data' not in st.session_state:
 
 # # Define selectbox options and their corresponding indices
 # state_options = ['ABIA', 'ABUJA', 'LAGOS', 'KANO', 'KADUNA', 'OGUN', 'OYO']
-
 enrollee_id = st.text_input('Kindly input your Member ID to confirm your eligibility')
+
 #add a submit button
 st.button("Submit", key="button1", help="Click or Press Enter")
 enrollee_id = str(enrollee_id)
