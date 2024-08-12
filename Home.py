@@ -46,7 +46,7 @@ conn = pyodbc.connect(
 #         +st.secrets['password']
 #         )
 
-query1 = "SELECT * from vw_wellness_enrollee_portal"
+query1 = "SELECT * from vw_wellness_enrollee_portal_update"
 query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, Wellness_benefits, selected_date, selected_session, date_submitted\
             FROM enrollee_annual_wellness_reg_web_portal'
 query3 = 'select * from updated_wellness_providers'
