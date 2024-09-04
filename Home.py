@@ -272,6 +272,12 @@ if enrollee_id:
         job_type = st.selectbox('Occupation', options=['Mainly Desk Work', 'Mainly Field Work', 'Desk and Field Work', 'Physical Outdoor Work', 'Physical Indoor Work'], index=['Mainly Desk Work', 'Mainly Field Work', 'Desk and Field Work', 'Physical Outdoor Work', 'Physical Indoor Work'].index(st.session_state.user_data['job_type']))
         # age = st.number_input('Your Current Age', value=st.session_state.user_data['age'])
         state = st.selectbox('Your Current Location', options=wellness_providers['STATE'].unique())
+
+        #create a list of sterling bank enrollees that have a different wellness package
+        sterling_bank_enrollees = [145711, 100552, 101401, 45492, 45509, 45537, 45704, 45711, 45712, 45747, 45748, 67106, 67113, 67132, 67133, 80701, 105096, 45532]
+        #convert the sterling_bank_enrollees list to a string
+        sterling_bank_enrollees = [str(i) for i in sterling_bank_enrollees]
+
         if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS':
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=['CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor,31 Kodesoh Street, Ikeja',
                                                                                                'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I',
@@ -304,6 +310,9 @@ if enrollee_id:
             benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Ray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test, Prostrate Specific Antigen'
         elif client == 'UNITED BANK FOR AFRICA' and age < 40:
             benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Rray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test'
+        #create a different benefits for specific sterling bank enrollees based on their enrollee_id
+        elif enrollee_id in sterling_bank_enrollees:
+            benefits = 'Physical Exam, BP, Blood Sugar, Urinalysis, Chest X-Ray, Stool Microscopy, Cholesterol, Prostate Specific Antigen(PSA)'
         else:
             benefits = package
 
