@@ -299,6 +299,16 @@ if enrollee_id:
             additional_provider = 'Onsite - SCB Office, 374 Ademola Adetokunbo Crescent Wuse II, Beside Visa/Airtel Building'
             available_provider = list(available_provider) + [additional_provider]
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+        elif client == 'TRANSCORP POWER UGHELLI' and state == 'DELTA ':
+            available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
+            additional_provider = 'AVON MEDICAL SITE CLINIC, Ughelli'
+            available_provider = list(available_provider) + [additional_provider]
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+        elif client == 'TRANS AFAM POWER PLANT LIMITED' and state == 'RIVERS ':
+            available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
+            additional_provider = 'AVON MEDICAL SITE CLINIC, Afam'
+            available_provider = list(available_provider) + [additional_provider]
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
             
         else:
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
