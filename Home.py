@@ -14,41 +14,42 @@ st.set_page_config(layout='wide')
 image = Image.open('wellness_image_1.png')
 st.image(image, use_column_width=True)
 
-server = os.environ.get('server_name')
-database = os.environ.get('db_name')
-username = os.environ.get('db_username')
-password = os.environ.get('db_password')
-login_username = os.environ.get('userlogin')
-login_password = os.environ.get('login_password')
+# server = os.environ.get('server_name')
+# database = os.environ.get('db_name')
+# username = os.environ.get('db_username')
+# password = os.environ.get('db_password')
+# login_username = os.environ.get('userlogin')
+# login_password = os.environ.get('login_password')
 
 
-conn = pyodbc.connect(
-        'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-        + server
-        +';DATABASE='
-        + database
-        +';UID='
-        + username
-        +';PWD='
-        + password
-        )
-
-# login_username = st.secrets['login_username']
-# login_password = st.secrets['login_password']
 # conn = pyodbc.connect(
 #         'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-#         +st.secrets['server']
+#         + server
 #         +';DATABASE='
-#         +st.secrets['database']
+#         + database
 #         +';UID='
-#         +st.secrets['username']
+#         + username
 #         +';PWD='
-#         +st.secrets['password']
+#         + password
 #         )
+
+login_username = st.secrets['login_username']
+login_password = st.secrets['login_password']
+conn = pyodbc.connect(
+        'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
+        +st.secrets['server']
+        +';DATABASE='
+        +st.secrets['database']
+        +';UID='
+        +st.secrets['username']
+        +';PWD='
+        +st.secrets['password']
+        )
 
 query1 = "SELECT * from vw_wellness_enrollee_portal_update"
 query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, Wellness_benefits, selected_date, selected_session, date_submitted\
-            FROM enrollee_annual_wellness_reg_web_portal'
+            FROM tbl_annual_wellness_enrollee_data a\
+            where a.PolicyEndDate = (select max(PolicyEndDate) from tbl_annual_wellness_enrollee_data b where a.MemberNo = b.MemberNo)'
 query3 = 'select * from updated_wellness_providers'
 @st.cache_data(ttl = dt.timedelta(hours=4))
 def get_data_from_sql():
@@ -136,8 +137,18 @@ enrollee_id = st.text_input('Kindly input your Member ID to confirm your eligibi
 st.button("Submit", key="button1", help="Click or Press Enter")
 enrollee_id = str(enrollee_id)
 
+
 if enrollee_id:
+    policystart = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyStartDate'].values[0]
+    policyend = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyEndDate'].values[0]
     if enrollee_id in filled_wellness_df['MemberNo'].values:
+        submitted_date = np.datetime_as_string(filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'date_submitted'].values[0], unit='D')
+        final_submit_date = dt.datetime.strptime(submitted_date, "%Y-%m-%d").date()
+    else:
+        final_submit_date = None
+
+    st.write(policystart, policyend, final_submit_date)
+    if (enrollee_id in filled_wellness_df['MemberNo'].values) and (policystart <= final_submit_date <= policyend):
         member_name = filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'MemberName'].values[0]
         clientname = filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'Client'].values[0]
         package = filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'Wellness_benefits'].values[0]
@@ -145,7 +156,7 @@ if enrollee_id:
         provider = filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'selected_provider'].values[0]
         app_date = filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'selected_date'].values[0]
         app_session = filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'selected_session'].values[0]
-        submitted_date = np.datetime_as_string(filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'date_submitted'].values[0], unit='D')
+        
         #change the submitted_date to date format, add 6 weeks and return the date in this format e.g Wednesday, 31st December 2021
         six_weeks = dt.datetime.strptime(submitted_date, "%Y-%m-%d").date() + dt.timedelta(weeks=6)
         six_weeks = six_weeks.strftime('%A, %d %B %Y')
@@ -243,7 +254,7 @@ if enrollee_id:
             if st.session_state.form_submitted:
                 st.session_state.form_submitted = False
 
-    elif (enrollee_id not in filled_wellness_df['MemberNo'].values) & (enrollee_id in wellness_df['memberno'].values):
+    elif (enrollee_id in wellness_df['memberno'].values) & (final_submit_date is None or final_submit_date <= policystart):
         enrollee_name = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'membername'].values[0]
         client = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'Client'].values[0]
         policy = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyName'].values[0]
@@ -259,7 +270,7 @@ if enrollee_id:
                 f'Kindly confirm that your enrollment details matches with the info displayed below.\n\n'
                 f'By proceeding to fill the form below, I understand and hereby acknowledge that my data would be collected and processed only for the performance of this wellness screening exercise.\n\n'
                 f'### Please note that once you complete this form, you only have till {six_weeks} to complete your wellness check.',icon="✅")
-        st.info(f'Company: {client}.\n\n Policy: {policy}.\n\n Please contact your Client Manager if this information does not match with your enrollment details')
+        st.info(f'Company: {client}.\n\n Policy: {policy}.\n\n Policy End Date: {policyend}.\n\n Please contact your Client Manager if this information does not match with your enrollment details')
 
         # #add a submit button
         # proceed = st.button("PROCEED", help="Click to proceed")
@@ -594,6 +605,8 @@ if enrollee_id:
             st.session_state.user_data['EnrolleeName'] = enrollee_name
             st.session_state.user_data['client'] = client
             st.session_state.user_data['policy'] = policy
+            st.session_state.user_data['policystart'] = policystart
+            st.session_state.user_data['policyend'] = policyend
             st.session_state.user_data['email'] = email
             st.session_state.user_data['mobile_num'] = mobile_num
             st.session_state.user_data['age'] = age
@@ -655,7 +668,7 @@ if enrollee_id:
             try:
                 # Define an SQL INSERT statement to add data to your database table
                 insert_query = """
-                INSERT INTO [dbo].[enrollee_annual_wellness_reg_web_portal] (MemberNo, MemberName, client, policy, email, mobile_num, job_type, age, state, selected_provider,
+                INSERT INTO [dbo].[tbl_annual_wellness_enrollee_data] (MemberNo, MemberName, client, policy,policystartdate, policyenddate, email, mobile_num, job_type, age, state, selected_provider,
                 sex, wellness_benefits, selected_date, selected_session,
                 [HIGH BLOOD PRESSURE - Family],[Diabetes - Family],[Cancer - Family],[Asthma - Family],[Arthritis - Family]
                 ,[High Cholesterol],[Heart Attack - Family],[Epilepsy - Family],[Tuberclosis - Family],[Substance Dependency - Family]
@@ -672,7 +685,7 @@ if enrollee_id:
                 ,[I HAVE TROUBLE CONCENTRATING ON THINGS, SUCH AS READING THE NEWSPAPER, OR WATCHING TV]
                 ,[THOUGHT THAT I WOULD BE BETTER OFF DEAD OR BETTER OFF HURTING MYSELF IN SOME WAY],
                 date_submitted)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """
 
                 # Execute the INSERT statement with the user's data
@@ -681,6 +694,8 @@ if enrollee_id:
                     st.session_state.user_data['EnrolleeName'],
                     st.session_state.user_data['client'],
                     st.session_state.user_data['policy'],
+                    st.session_state.user_data['policystart'],
+                    st.session_state.user_data['policyend'],
                     st.session_state.user_data['email'],
                     st.session_state.user_data['mobile_num'],
                     st.session_state.user_data['job_type'],
