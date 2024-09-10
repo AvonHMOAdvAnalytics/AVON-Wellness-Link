@@ -147,7 +147,7 @@ if enrollee_id:
     else:
         final_submit_date = None
 
-    st.write(policystart, policyend, final_submit_date)
+    # st.write(policystart, policyend, final_submit_date)
     if (enrollee_id in filled_wellness_df['MemberNo'].values) and (policystart <= final_submit_date <= policyend):
         member_name = filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'MemberName'].values[0]
         clientname = filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'Client'].values[0]
