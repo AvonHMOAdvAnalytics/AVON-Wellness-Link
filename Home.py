@@ -14,37 +14,37 @@ st.set_page_config(layout='wide')
 image = Image.open('wellness_image_1.png')
 st.image(image, use_column_width=True)
 
-server = os.environ.get('server_name')
-database = os.environ.get('db_name')
-username = os.environ.get('db_username')
-password = os.environ.get('db_password')
-login_username = os.environ.get('userlogin')
-login_password = os.environ.get('login_password')
+# server = os.environ.get('server_name')
+# database = os.environ.get('db_name')
+# username = os.environ.get('db_username')
+# password = os.environ.get('db_password')
+# login_username = os.environ.get('userlogin')
+# login_password = os.environ.get('login_password')
 
 
-conn = pyodbc.connect(
-        'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-        + server
-        +';DATABASE='
-        + database
-        +';UID='
-        + username
-        +';PWD='
-        + password
-        )
-
-# login_username = st.secrets['login_username']
-# login_password = st.secrets['login_password']
 # conn = pyodbc.connect(
 #         'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-#         +st.secrets['server']
+#         + server
 #         +';DATABASE='
-#         +st.secrets['database']
+#         + database
 #         +';UID='
-#         +st.secrets['username']
+#         + username
 #         +';PWD='
-#         +st.secrets['password']
+#         + password
 #         )
+
+login_username = st.secrets['login_username']
+login_password = st.secrets['login_password']
+conn = pyodbc.connect(
+        'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
+        +st.secrets['server']
+        +';DATABASE='
+        +st.secrets['database']
+        +';UID='
+        +st.secrets['username']
+        +';PWD='
+        +st.secrets['password']
+        )
 
 query1 = "SELECT * from vw_wellness_enrollee_portal_update"
 query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, Wellness_benefits, selected_date, selected_session, date_submitted\
@@ -231,14 +231,14 @@ if enrollee_id:
                 #add a submit button
                 proceed = st.form_submit_button("PROCEED", help="Click to proceed")
             if proceed:
-                #insert the generated PA code into the enrollee_annual_wellness_reg_web_portal on the database
+                #insert the generated PA code into the tbl_annual_wellness_enrollee_data on the database
                 cursor = conn.cursor()
                 query = """
-                UPDATE enrollee_annual_wellness_reg_web_portal
+                UPDATE tbl_annual_wellness_enrollee_data
                 SET IssuedPACode = ?, PA_Tests = ?, PA_Provider = ?, PAIssueDate = ?
-                WHERE MemberNo = ?
+                WHERE MemberNo = ? and date_submitted = (select max(date_submitted) from tbl_annual_wellness_enrollee_data where MemberNo = ?)
                 """
-                cursor.execute(query, pacode, pa_tests_str, pa_provider, pa_issue_date, enrollee_id)
+                cursor.execute(query, pacode, pa_tests_str, pa_provider, pa_issue_date, enrollee_id, enrollee_id)
                 conn.commit()
                 st.success('PA Code has been successfully updated for the enrollee')
 
