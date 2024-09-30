@@ -331,6 +331,12 @@ if enrollee_id:
             additional_provider = 'AMAZING GRACE HOSPITAL - 7, Iloro Street, Ijebu-Ode, Ogun State'
             available_provider = list(available_provider) + [additional_provider]
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
+        elif client == 'HEIRS HOLDINGS' and state == 'LAGOS':
+            available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
+            additional_provider = 'AVON Medical'
+            available_provider = list(available_provider) + [additional_provider]
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
+
 
         else:
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
