@@ -139,13 +139,19 @@ enrollee_id = str(enrollee_id)
 
 
 if enrollee_id:
-    policystart = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyStartDate'].values[0]
-    policyend = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyEndDate'].values[0]
     if enrollee_id in filled_wellness_df['MemberNo'].values:
+        policystart = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyStartDate'].values[0]
+        policyend = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyEndDate'].values[0]
         submitted_date = np.datetime_as_string(filled_wellness_df.loc[filled_wellness_df['MemberNo'] == enrollee_id, 'date_submitted'].values[0], unit='D')
         final_submit_date = dt.datetime.strptime(submitted_date, "%Y-%m-%d").date()
     else:
         final_submit_date = None
+        if enrollee_id in wellness_df['memberno'].values:
+            policystart = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyStartDate'].values[0]
+            policyend = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyEndDate'].values[0]
+        else:
+            policystart = None
+            policyend = None   
 
     # st.write(policystart, policyend, final_submit_date)
     if (enrollee_id in filled_wellness_df['MemberNo'].values) and (policystart <= final_submit_date <= policyend):
@@ -280,9 +286,9 @@ if enrollee_id:
         email = st.text_input('Input a Valid Email Address', st.session_state.user_data['email'])
         mobile_num = st.text_input('Input a Valid Mobile Number', st.session_state.user_data['mobile_num'])
         gender = st.radio('Sex', options=['Male', 'Female'], index=['Male', 'Female'].index(st.session_state.user_data['gender']))
-        job_type = st.selectbox('Occupation', options=['Mainly Desk Work', 'Mainly Field Work', 'Desk and Field Work', 'Physical Outdoor Work', 'Physical Indoor Work'], index=['Mainly Desk Work', 'Mainly Field Work', 'Desk and Field Work', 'Physical Outdoor Work', 'Physical Indoor Work'].index(st.session_state.user_data['job_type']))
+        job_type = st.selectbox('Occupation Type', placeholder='Pick your Work Category', index=None, options=['Mainly Desk Work', 'Mainly Field Work', 'Desk and Field Work', 'Physical Outdoor Work', 'Physical Indoor Work'])
         # age = st.number_input('Your Current Age', value=st.session_state.user_data['age'])
-        state = st.selectbox('Your Current Location', options=wellness_providers['STATE'].unique())
+        state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=wellness_providers['STATE'].unique())
 
         #create a list of sterling bank enrollees that have a different wellness package
         sterling_bank_enrollees = [145711, 100552, 101401, 45492, 45509, 45537, 45704, 45711, 45712, 45747, 45748, 67106, 67113, 67132, 67133, 80701, 105096, 45532]
@@ -290,45 +296,45 @@ if enrollee_id:
         sterling_bank_enrollees = [str(i) for i in sterling_bank_enrollees]
 
         if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS':
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=['CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor,31 Kodesoh Street, Ikeja',
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=['CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor,31 Kodesoh Street, Ikeja',
                                                                                                'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I',
                                                                                                'UBA Head Office - Marina, Lagos Island.'])
         elif client == 'STANDARD CHARTERED BANK NIGERIA LIMITED' and state == 'LAGOS':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'Onsite - SCB Head Office - 142, Ahmadu Bello Way, Victoria Island'
             available_provider = list(available_provider) + [additional_provider]
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility',placeholder='Select a Provider', index=None, options=available_provider)
         
         elif client == 'STANDARD CHARTERED BANK NIGERIA LIMITED' and state == 'RIVERS ':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'Onsite - SCB Office, 143, Port Harcourt Aba Express Road (F-0)'
             available_provider = list(available_provider) + [additional_provider]
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility',placeholder='Select a Provider', index=None, options=available_provider)
 
         elif client == 'STANDARD CHARTERED BANK NIGERIA LIMITED' and state == 'FCT ':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'Onsite - SCB Office, 374 Ademola Adetokunbo Crescent Wuse II, Beside Visa/Airtel Building'
             available_provider = list(available_provider) + [additional_provider]
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility',placeholder='Select a Provider', index=None, options=available_provider)
         elif client == 'TRANSCORP POWER UGHELLI' and state == 'DELTA ':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'AVON MEDICAL SITE CLINIC, Ughelli'
             available_provider = list(available_provider) + [additional_provider]
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         elif client == 'TRANS AFAM POWER PLANT LIMITED' and state == 'RIVERS ':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'AVON MEDICAL SITE CLINIC, Afam'
             available_provider = list(available_provider) + [additional_provider]
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         elif client == 'TULIP COCOA PROCESSING' and state == 'OGUN ':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'AMAZING GRACE HOSPITAL - 7, Iloro Street, Ijebu-Ode, Ogun State'
             available_provider = list(available_provider) + [additional_provider]
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
 
         else:
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', options=available_provider)
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         
         if client == 'UNITED BANK FOR AFRICA' and age >= 40 and gender == 'Female':
             benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Ray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test, Cervical Smear'
@@ -345,17 +351,17 @@ if enrollee_id:
         if client == 'PIVOT   GIS LIMITED':
             current_date = dt.date.today()
             # Define the maximum date as '2023-12-18' as a datetime.date object
-            max_date = dt.date(2023, 12, 31)
+            max_date = dt.date(2024, 12, 31)
             # Display a date picker
             selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
         elif client == 'UNITED BANK FOR AFRICA':
             current_date = dt.date.today()
             # Define the maximum date as '2023-12-18' as a datetime.date object
-            max_date = dt.date(2023, 12, 31)
+            max_date = dt.date(2024, 12, 31)
             # Display a date picker
             selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
         else:
-            max_date = dt.date(2024, 12, 31)
+            max_date = dt.date(2025, 12, 31)
             selected_date = st.date_input('Pick Your Preferred Appointment Date',max_value=max_date)
 
 
