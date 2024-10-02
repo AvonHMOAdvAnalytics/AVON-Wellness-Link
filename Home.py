@@ -287,8 +287,11 @@ if enrollee_id:
         mobile_num = st.text_input('Input a Valid Mobile Number', st.session_state.user_data['mobile_num'])
         gender = st.radio('Sex', options=['Male', 'Female'], index=['Male', 'Female'].index(st.session_state.user_data['gender']))
         job_type = st.selectbox('Occupation Type', placeholder='Pick your Work Category', index=None, options=['Mainly Desk Work', 'Mainly Field Work', 'Desk and Field Work', 'Physical Outdoor Work', 'Physical Indoor Work'])
-        # age = st.number_input('Your Current Age', value=st.session_state.user_data['age'])
-        state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=wellness_providers['STATE'].unique())
+        # age = st.number_input('Your Current Age', value=st.session_state.user_data['age']
+        excluded_state = 'HQ'
+        available_states = wellness_providers['STATE'].unique()
+        available_states = [state for state in available_states if state != excluded_state]
+        state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=available_states)
 
         #create a list of sterling bank enrollees that have a different wellness package
         sterling_bank_enrollees = [145711, 100552, 101401, 45492, 45509, 45537, 45704, 45711, 45712, 45747, 45748, 67106, 67113, 67132, 67133, 80701, 105096, 45532]
