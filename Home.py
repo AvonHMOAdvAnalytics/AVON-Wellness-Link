@@ -14,37 +14,37 @@ st.set_page_config(layout='wide')
 image = Image.open('wellness_image_1.png')
 st.image(image, use_column_width=True)
 
-server = os.environ.get('server_name')
-database = os.environ.get('db_name')
-username = os.environ.get('db_username')
-password = os.environ.get('db_password')
-login_username = os.environ.get('userlogin')
-login_password = os.environ.get('login_password')
+# server = os.environ.get('server_name')
+# database = os.environ.get('db_name')
+# username = os.environ.get('db_username')
+# password = os.environ.get('db_password')
+# login_username = os.environ.get('userlogin')
+# login_password = os.environ.get('login_password')
 
 
-conn = pyodbc.connect(
-        'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-        + server
-        +';DATABASE='
-        + database
-        +';UID='
-        + username
-        +';PWD='
-        + password
-        )
-
-# login_username = st.secrets['login_username']
-# login_password = st.secrets['login_password']
 # conn = pyodbc.connect(
 #         'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
-#         +st.secrets['server']
+#         + server
 #         +';DATABASE='
-#         +st.secrets['database']
+#         + database
 #         +';UID='
-#         +st.secrets['username']
+#         + username
 #         +';PWD='
-#         +st.secrets['password']
+#         + password
 #         )
+
+login_username = st.secrets['login_username']
+login_password = st.secrets['login_password']
+conn = pyodbc.connect(
+        'DRIVER={ODBC Driver 17 for SQL Server};SERVER='
+        +st.secrets['server']
+        +';DATABASE='
+        +st.secrets['database']
+        +';UID='
+        +st.secrets['username']
+        +';PWD='
+        +st.secrets['password']
+        )
 
 query1 = "SELECT * from vw_wellness_enrollee_portal_update"
 query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, Wellness_benefits, selected_date, selected_session, date_submitted\
@@ -334,7 +334,7 @@ if enrollee_id:
             additional_provider = 'AMAZING GRACE HOSPITAL - 7, Iloro Street, Ijebu-Ode, Ogun State'
             available_provider = list(available_provider) + [additional_provider]
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
-        elif client == 'HEIRS HOLDINGS' and state == 'LAGOS':
+        elif (client == 'HEIRS HOLDINGS' or enrollee_id == str(164386)) and state == 'LAGOS':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'AVON Medical'
             available_provider = list(available_provider) + [additional_provider]
@@ -679,384 +679,401 @@ if enrollee_id:
             st.session_state.user_data['resp_4_s'] = resp_4_s
             st.session_state.user_data['resp_4_t'] = resp_4_t
 
-            cursor = conn.cursor()
-            try:
-                # Define an SQL INSERT statement to add data to your database table
-                insert_query = """
-                INSERT INTO [dbo].[tbl_annual_wellness_enrollee_data] (MemberNo, MemberName, client, policy,policystartdate, policyenddate, email, mobile_num, job_type, age, state, selected_provider,
-                sex, wellness_benefits, selected_date, selected_session,
-                [HIGH BLOOD PRESSURE - Family],[Diabetes - Family],[Cancer - Family],[Asthma - Family],[Arthritis - Family]
-                ,[High Cholesterol],[Heart Attack - Family],[Epilepsy - Family],[Tuberclosis - Family],[Substance Dependency - Family]
-                ,[Mental Illness - Family],[HIGH BLOOD PRESSURE - Personal],[Diabetes - Personal],[Cancer - Personal],[Asthma - Personal]
-                ,[Ulcer - Personal],[Poor Vision - Personal],[Allergy - Personal],[Arthritis/Low Back Pain - Personal],[Anxiety/Depression - Personal]
-                ,[CEASAREAN SECTION],[FRACTURE REPAIR],[HERNIA],[LUMP REMOVAL] ,[APPENDICETOMY],[SPINE SURGERY],[I AVOID EATING FOODS THAT ARE HIGH IN FAT]
-                ,[I AVOID THE USE OR MINIMISE MY EXPOSURE TO ALCOHOL],[I AVOID THE USE OF TOBACCO PRODUCTS],[I AM PHYSICALLY FIT AND EXERCISE AT LEAST 30 MINUTES EVERY DAY]
-                ,[I EAT VEGETABLES AND FRUITS AT LEAST 3 TIMES WEEKLY],[I DRINK 6-8 GLASSES OF WATER A DAY],[I MAINTAIN MY WEIGHT WITHIN THE RECOMMENDATION FOR MY WEIGHT, AGE AND HEIGHT]
-                ,[MY BLOOD PRESSURE IS WITHIN NORMAL RANGE WITHOUT THE USE OF DRUGS],[MY CHOLESTEROL LEVEL IS WITHIN THE NORMAL RANGE]
-                ,[I EASILY MAKE DECISIONS WITHOUT WORRY],[I ENJOY MORE THAN 5 HOURS OF SLEEP AT NIGHT],[I ENJOY MY WORK AND LIFE]
-                ,[I ENJOY THE SUPPORT FROM FRIENDS AND FAMILY],[I FEEL BAD ABOUT MYSELF OR THAT I AM A FAILURE OR HAVE LET MYSELF OR MY FAMILY DOWN]
-                ,[I HAVE POOR APPETITE OR I AM OVER-EATING],[I FEEL DOWN, DEPRESSED, HOPELESS, TIRED OR HAVE LITTLE ENERGY]
-                ,[I HAVE TROUBLE FALLING ASLEEP, STAYING ASLEEP, OR SLEEPING TOO MUCH],[I HAVE NO INTEREST OR PLEASURE IN DOING THINGS]
-                ,[I HAVE TROUBLE CONCENTRATING ON THINGS, SUCH AS READING THE NEWSPAPER, OR WATCHING TV]
-                ,[THOUGHT THAT I WOULD BE BETTER OFF DEAD OR BETTER OFF HURTING MYSELF IN SOME WAY],
-                date_submitted)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                """
+            #initialise an empty list to store missing fields
+            missing_fields = []
 
-                # Execute the INSERT statement with the user's data
-                cursor.execute(insert_query, (
-                    st.session_state.user_data['member_number'],
-                    st.session_state.user_data['EnrolleeName'],
-                    st.session_state.user_data['client'],
-                    st.session_state.user_data['policy'],
-                    st.session_state.user_data['policystart'],
-                    st.session_state.user_data['policyend'],
-                    st.session_state.user_data['email'],
-                    st.session_state.user_data['mobile_num'],
-                    st.session_state.user_data['job_type'],
-                    st.session_state.user_data['age'],
-                    st.session_state.user_data['state'],
-                    st.session_state.user_data['selected_provider'],
-                    st.session_state.user_data['gender'],
-                    st.session_state.user_data['wellness_benefit'],
-                    st.session_state.user_data['selected_date_str'],
-                    st.session_state.user_data['session'],
-                    st.session_state.user_data['resp_1_a'],
-                    st.session_state.user_data['resp_1_b'],
-                    st.session_state.user_data['resp_1_c'],
-                    st.session_state.user_data['resp_1_d'],
-                    st.session_state.user_data['resp_1_e'],
-                    st.session_state.user_data['resp_1_f'],
-                    st.session_state.user_data['resp_1_g'],
-                    st.session_state.user_data['resp_1_h'],
-                    st.session_state.user_data['resp_1_i'],
-                    st.session_state.user_data['resp_1_j'],
-                    st.session_state.user_data['resp_1_k'],
-                    st.session_state.user_data['resp_2_a'],
-                    st.session_state.user_data['resp_2_b'],
-                    st.session_state.user_data['resp_2_c'],
-                    st.session_state.user_data['resp_2_d'],
-                    st.session_state.user_data['resp_2_e'],
-                    st.session_state.user_data['resp_2_f'],
-                    st.session_state.user_data['resp_2_g'],
-                    st.session_state.user_data['resp_2_h'],
-                    st.session_state.user_data['resp_2_i'],
-                    st.session_state.user_data['resp_3_a'],
-                    st.session_state.user_data['resp_3_b'],
-                    st.session_state.user_data['resp_3_c'],
-                    st.session_state.user_data['resp_3_d'],
-                    st.session_state.user_data['resp_3_e'],
-                    st.session_state.user_data['resp_3_f'],
-                    st.session_state.user_data['resp_4_a'],
-                    st.session_state.user_data['resp_4_b'],
-                    st.session_state.user_data['resp_4_c'],
-                    st.session_state.user_data['resp_4_d'],
-                    st.session_state.user_data['resp_4_e'],
-                    st.session_state.user_data['resp_4_f'],
-                    st.session_state.user_data['resp_4_g'],
-                    st.session_state.user_data['resp_4_h'],
-                    st.session_state.user_data['resp_4_i'],
-                    st.session_state.user_data['resp_4_j'],
-                    st.session_state.user_data['resp_4_k'],
-                    st.session_state.user_data['resp_4_l'],
-                    st.session_state.user_data['resp_4_m'],
-                    st.session_state.user_data['resp_4_n'],
-                    st.session_state.user_data['resp_4_o'],
-                    st.session_state.user_data['resp_4_p'],
-                    st.session_state.user_data['resp_4_q'],
-                    st.session_state.user_data['resp_4_r'],
-                    st.session_state.user_data['resp_4_s'],
-                    st.session_state.user_data['resp_4_t'],
-                    dt.datetime.now()
-                ))
-
-                # Commit the transaction to save the data to the database
-                conn.commit()
-
-                # Provide feedback to the user
-                st.info(f'Thank you {enrollee_name}.\n\n'
-                    f'Your annual wellness has been successfully booked.\n\n'
-                    f'###Please note that you have from now till {six_weeks} to complete your annual wellness exercise.')
-
-            except Exception as e:
-                st.error(f"An error occurred: {str(e)}")
-
-            finally:
-                # Close the cursor and the database connection
-                cursor.close()
-                conn.close()
-
-                recipient_email = email
-                subject = 'AVON ENROLLEE WELLNESS APPOINTMENT CONFIRMATION'
-                # Create a table (HTML format) with some sample data
-                msg_befor_table = f'''
-                Dear {enrollee_name},<br><br>
-                We hope you are staying safe.<br><br>
-                You have been scheduled for a wellness screening at your selected provider, see the below table for details.<br><br>
-                '''
-                #create a table with the booking information
-                wellness_table = {
-                    "Appointment Date": [selected_date_str + ' - ' + session],
-                    "Wellness Facility": [selected_provider],
-                    "Wellness Benefits": [benefits]
-                }
-
-                #convert the wellness_table to a html table
-                wellness_table_html = pd.DataFrame(wellness_table).to_html(index=False, escape=False, justify='center')
-
-                #initialise an empty table
-                table_html = f"""
-                <style>
-                table {{
-                        border: 1px solid #1C6EA4;
-                        background-color: #EEEEEE;
-                        width: 100%;
-                        text-align: left;
-                        border-collapse: collapse;
-                        }}
-                        table td, table th {{
-                        border: 1px solid #AAAAAA;
-                        padding: 3px 2px;
-                        }}
-                        table tbody td {{
-                        font-size: 13px;
-                        }}
-                        table thead {{
-                        background: #59058D;
-                        border-bottom: 2px solid #444444;
-                        }}
-                        table thead th {{
-                        font-size: 15px;
-                        font-weight: bold;
-                        color: #FFFFFF;
-                        border-left: 2px solid #D0E4F5;
-                        }}
-                        table thead th:first-child {{
-                        border-left: none;
-                        }}
-                </style>
-                <table>
-                {wellness_table_html}
-                </table>
-                """
-
-                # table_html += f"""
-                # <tr>
-                #     <td>{selected_date_str} - {session}</td>
-                #     <td>{selected_provider}</td>
-                #     <td>{benefits}</td>
-                # </tr>
-                # """
-
-                # table_html += "</table>" #close the table
-
-                #customised text for upcountry
-                text_after_table = f'''
-                <br>Kindly note the following requirements for your wellness exercise:<br><br>
-
-                -Present at the hospital with your Avon member ID number ({enrollee_id})/ Ecard.<br>
-                -Provide the facility with your valid email address to mail your result.<br>
-                -Visit your designated centers between the hours of 8 am - 11 am any day of the week from the scheduled date communicated.<br>
-                -Arrive at the facility fasting i.e. last meals should be before 9 pm the previous night and nothing should be eaten that morning before the test.
-                You are allowed to drink up to two cups of water.<br><br>
-
-                For the best results of your screening, it is advisable for blood tests to be done on or before 10 am.<br><br>
-                Your results will be strictly confidential and will be sent to you directly via your email. You are advised to review
-                your results with your primary care provider for relevant medical advice.<br><br>
-
-                Should you require assistance at any time or wish to make any complaint about the service at any of the facilities, 
-                please contact our Call-Center at 0700-277-9800  or send us a chat on WhatsApp at 0912-603-9532. 
-                You can also send us an email at callcentre@avonhealthcare.com. Please be assured that an agent would always be on standby to assist you.<br><br>
-
-                Thank you for choosing Avon HMO,<br><br>
-
-                Medical Services.<br>
-
-                '''
-
-                #customised text for Lagos enrollees
-                text_after_table1 = f'''
-                <br>Kindly note that wellness exercise at your selected facility is strictly by appointment and
-                and you are expected to be available at the facility on the appointment date as selected by you.<br><br>
-                Also, note that you will be required to:<br><br>
-
-                -Present at the facility with your Avon member ID number ({enrollee_id})/ Ecard.<br>
-                -Provide the facility with your valid email address to mail your result.<br>
-                -You are advised to be present at your selected facility 15 mins before your scheduled time.<br><br>
-                
-                Your results will be strictly confidential and will be sent to you directly via your email. You are advised to review
-                your results with your primary care provider for relevant medical advice.<br><br>
-
-                Should you require assistance at any time or wish to make any complaint about the service at any of the facilities, 
-                please contact our Call-Center at 0700-277-9800  or send us a chat on WhatsApp at 0912-603-9532. 
-                You can also send us an email at callcentre@avonhealthcare.com. Please be assured that an agent would always be on standby to assist you.<br><br>
-
-                Thank you for choosing Avon HMO,<br><br>
-
-                Medical Services.<br>
-
-                '''
-                head_office_msg = f'''
-                Dear {enrollee_name},<br><br>
-                We hope you are staying safe.<br><br>
-                You have been scheduled for a wellness screening at {selected_provider}.<br><br>
-                Find listed below your wellness benefits:<br><br><b>{benefits}</b>.<br><br>
-                Kindly note the following regarding your wellness appointment:<br><br>
-                - HR will reach out to you with a scheduled date and time for your annual wellness.<br><br>
-                - Once scheduled, you are to present your Avon HMO ID card or member ID - {enrollee_id} at the point of accessing your annual wellness check.<br><br>
-                - The wellness exercise will take place at the designated floor which will be communicated to you by the HR between 9 am and 4 pm from Monday – Friday. <br><br>
-                - For the most accurate fasting blood sugar test results, it is advisable for blood tests to be done before 10am. <br><br>
-                - Staff results will be sent to the email addresses provided by them to the wellness providers.<br><br>
-                - There will be consultation with a physician to review immediate test results on-site while other test results that are not readily available will be reviewed by a physician at your Primary Care Provider.<br><br>
-                
-                Should you require assistance at any time or wish to make any complaint about the service rendered during this wellness exercise,
-                please contact our Call-Center at 0700-277-9800 or send us a chat on WhatsApp at 0912-603-9532.
-                You can also send us an email at callcentre@avonhealthcare.com. Please be assured that an agent would always be on standby to assist you.<br><br>
-                Thank you for choosing Avon HMO.<br><br>
-                Medical Services.<br>
-                '''
-
-                pivotgis_msg = f'''
-                <br>Kindly note that this wellness activation is only valid till the 31st of December, 2023.<br><br>
-                Also, note that you will be required to:<br><br>
-
-                -Present at the hospital with your Avon member ID number ({enrollee_id})/ Ecard.<br>
-                -Provide the facility with your valid email address to mail your result.<br>
-                -You are advised to be present at your selected facility 15 mins before your scheduled time.<br><br>
-                
-                Your results will be strictly confidential and will be sent to you directly via your email. You are advised to review
-                your results with your primary care provider for relevant medical advice.<br><br>
-
-                Should you require assistance at any time or wish to make any complaint about the service at any of the facilities, 
-                please contact our Call-Center at 0700-277-9800  or send us a chat on WhatsApp at 0912-603-9532. 
-                You can also send us an email at callcentre@avonhealthcare.com. Please be assured that an agent would always be on standby to assist you.<br><br>
-
-                Thank you for choosing Avon HMO,<br><br>
-
-                Medical Services.<br>
-                '''
-
-                # html_string = f'''<!DOCTYPE html>
-                #     <html lang="en">
-                #     <head>
-                #         <meta charset="UTF-8">
-                #         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                #         <title>Email Message</title>
-                #         <style>
-                #             /* Define your styles here */
-
-                #             .email-container {{
-                #                 max-width: 600px;
-                #                 margin: 0 auto;
-                #                 padding: 20px;
-                #                 border: 1px solid #ccc;
-                #                 border-radius: 10px;
-                #             }}
-                #             .company-logo {{
-                #                 max-width: 150px;
-                #                 height: auto;
-                #                 margin-bottom: 20px;
-                #             }}
-                #             .table-container {{
-                #                 border: 1px solid #1C6EA4;
-                #                 background-color: #EEEEEE;
-                #                 width: 100%;
-                #                 text-align: left;
-                #                 border-collapse: collapse;
-                #                 margin-bottom: 20px;
-                #             }}
-                #             .table-container td, .table-container th {{
-                #                 border: 1px solid #AAAAAA;
-                #                 padding: 3px 2px;
-                #             }}
-                #             .table-container tbody td {{
-                #                 font-size: 13px;
-                #             }}
-                #             .table-container thead {{
-                #                 background: #59058D;
-                #                 border-bottom: 2px solid #444444;
-                #             }}
-                #             .table-container thead th {{
-                #                 font-size: 15px;
-                #                 font-weight: bold;
-                #                 color: #FFFFFF;
-                #                 border-left: 2px solid #D0E4F5;
-                #             }}
-                #             .table-container thead th:first-child {{
-                #                 border-left: none;
-                #             }}
-                #         </style>
-                #     </head>
-                #     <body>
-                #         <div class="email-container">
-                #             <img src="wellness_image.png" alt="Company Logo" class="company-logo">
-                #             <div class="table-container">
-                #                 <!-- Your table HTML goes here -->
-                #                 <table>
-                #                     {wellness_table_html}
-                #                 </table>
-                #             </div>
-                #             <!-- Additional text after the table -->
-                #             <p>{text_after_table}</p>
-                #         </div>
-                #     </body>
-                #     </html>
-                #     '''
-
-                #put the table and text together in a text border with an image added
-
-                upcountry_message = msg_befor_table + table_html + text_after_table
-                cerba_message = msg_befor_table + table_html + text_after_table1
-                pivot_msg = msg_befor_table + table_html + pivotgis_msg
+            #check each required field
+            if not email:
+                missing_fields.append('Email')
+            if not mobile_num:
+                missing_fields.append('Mobile Number')
+            if not state:
+                missing_fields.append('Your Current Location')
+            if not selected_provider:
+                missing_fields.append('Preferred Wellness Facility')
             
-                myemail = 'noreply@avonhealthcare.com'
-                password = os.environ.get('emailpassword')
-                # password = st.secrets["emailpassword"]
-                #add a condition to use the citron_bcc_list whenever any of the CITRON wellness providers is selected by the enrollee
-                if (selected_provider == 'ECHOLAB - Opposite mararaba medical centre, Tipper Garage, Mararaba') or (selected_provider == 'TOBIS CLINIC - Chief Melford Okilo Road Opposite Sobaz Filling Station, Akenfa –Epie') or (selected_provider == 'ECHOLAB - 375B Nnebisi Road, Umuagu, Asaba'):
-                    bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
-                                'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com', 
-                                'adeoluwa@citron-health.com', 'hello@citron-health.com']
-                else:
-                    bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
-                                 'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com']
-                    
-                to_email_list =[recipient_email]
+            if missing_fields:
+                st.error(f"The following field(s) are required: {', '.join(missing_fields)}")
+            else:
 
+                cursor = conn.cursor()
                 try:
-                    server = smtplib.SMTP('smtp.office365.com', 587)
-                    server.starttls()
+                    # Define an SQL INSERT statement to add data to your database table
+                    insert_query = """
+                    INSERT INTO [dbo].[tbl_annual_wellness_enrollee_data] (MemberNo, MemberName, client, policy,policystartdate, policyenddate, email, mobile_num, job_type, age, state, selected_provider,
+                    sex, wellness_benefits, selected_date, selected_session,
+                    [HIGH BLOOD PRESSURE - Family],[Diabetes - Family],[Cancer - Family],[Asthma - Family],[Arthritis - Family]
+                    ,[High Cholesterol],[Heart Attack - Family],[Epilepsy - Family],[Tuberclosis - Family],[Substance Dependency - Family]
+                    ,[Mental Illness - Family],[HIGH BLOOD PRESSURE - Personal],[Diabetes - Personal],[Cancer - Personal],[Asthma - Personal]
+                    ,[Ulcer - Personal],[Poor Vision - Personal],[Allergy - Personal],[Arthritis/Low Back Pain - Personal],[Anxiety/Depression - Personal]
+                    ,[CEASAREAN SECTION],[FRACTURE REPAIR],[HERNIA],[LUMP REMOVAL] ,[APPENDICETOMY],[SPINE SURGERY],[I AVOID EATING FOODS THAT ARE HIGH IN FAT]
+                    ,[I AVOID THE USE OR MINIMISE MY EXPOSURE TO ALCOHOL],[I AVOID THE USE OF TOBACCO PRODUCTS],[I AM PHYSICALLY FIT AND EXERCISE AT LEAST 30 MINUTES EVERY DAY]
+                    ,[I EAT VEGETABLES AND FRUITS AT LEAST 3 TIMES WEEKLY],[I DRINK 6-8 GLASSES OF WATER A DAY],[I MAINTAIN MY WEIGHT WITHIN THE RECOMMENDATION FOR MY WEIGHT, AGE AND HEIGHT]
+                    ,[MY BLOOD PRESSURE IS WITHIN NORMAL RANGE WITHOUT THE USE OF DRUGS],[MY CHOLESTEROL LEVEL IS WITHIN THE NORMAL RANGE]
+                    ,[I EASILY MAKE DECISIONS WITHOUT WORRY],[I ENJOY MORE THAN 5 HOURS OF SLEEP AT NIGHT],[I ENJOY MY WORK AND LIFE]
+                    ,[I ENJOY THE SUPPORT FROM FRIENDS AND FAMILY],[I FEEL BAD ABOUT MYSELF OR THAT I AM A FAILURE OR HAVE LET MYSELF OR MY FAMILY DOWN]
+                    ,[I HAVE POOR APPETITE OR I AM OVER-EATING],[I FEEL DOWN, DEPRESSED, HOPELESS, TIRED OR HAVE LITTLE ENERGY]
+                    ,[I HAVE TROUBLE FALLING ASLEEP, STAYING ASLEEP, OR SLEEPING TOO MUCH],[I HAVE NO INTEREST OR PLEASURE IN DOING THINGS]
+                    ,[I HAVE TROUBLE CONCENTRATING ON THINGS, SUCH AS READING THE NEWSPAPER, OR WATCHING TV]
+                    ,[THOUGHT THAT I WOULD BE BETTER OFF DEAD OR BETTER OFF HURTING MYSELF IN SOME WAY],
+                    date_submitted)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                    """
 
-                    #login to outlook account
-                    server.login(myemail, password)
+                    # Execute the INSERT statement with the user's data
+                    cursor.execute(insert_query, (
+                        st.session_state.user_data['member_number'],
+                        st.session_state.user_data['EnrolleeName'],
+                        st.session_state.user_data['client'],
+                        st.session_state.user_data['policy'],
+                        st.session_state.user_data['policystart'],
+                        st.session_state.user_data['policyend'],
+                        st.session_state.user_data['email'],
+                        st.session_state.user_data['mobile_num'],
+                        st.session_state.user_data['job_type'],
+                        st.session_state.user_data['age'],
+                        st.session_state.user_data['state'],
+                        st.session_state.user_data['selected_provider'],
+                        st.session_state.user_data['gender'],
+                        st.session_state.user_data['wellness_benefit'],
+                        st.session_state.user_data['selected_date_str'],
+                        st.session_state.user_data['session'],
+                        st.session_state.user_data['resp_1_a'],
+                        st.session_state.user_data['resp_1_b'],
+                        st.session_state.user_data['resp_1_c'],
+                        st.session_state.user_data['resp_1_d'],
+                        st.session_state.user_data['resp_1_e'],
+                        st.session_state.user_data['resp_1_f'],
+                        st.session_state.user_data['resp_1_g'],
+                        st.session_state.user_data['resp_1_h'],
+                        st.session_state.user_data['resp_1_i'],
+                        st.session_state.user_data['resp_1_j'],
+                        st.session_state.user_data['resp_1_k'],
+                        st.session_state.user_data['resp_2_a'],
+                        st.session_state.user_data['resp_2_b'],
+                        st.session_state.user_data['resp_2_c'],
+                        st.session_state.user_data['resp_2_d'],
+                        st.session_state.user_data['resp_2_e'],
+                        st.session_state.user_data['resp_2_f'],
+                        st.session_state.user_data['resp_2_g'],
+                        st.session_state.user_data['resp_2_h'],
+                        st.session_state.user_data['resp_2_i'],
+                        st.session_state.user_data['resp_3_a'],
+                        st.session_state.user_data['resp_3_b'],
+                        st.session_state.user_data['resp_3_c'],
+                        st.session_state.user_data['resp_3_d'],
+                        st.session_state.user_data['resp_3_e'],
+                        st.session_state.user_data['resp_3_f'],
+                        st.session_state.user_data['resp_4_a'],
+                        st.session_state.user_data['resp_4_b'],
+                        st.session_state.user_data['resp_4_c'],
+                        st.session_state.user_data['resp_4_d'],
+                        st.session_state.user_data['resp_4_e'],
+                        st.session_state.user_data['resp_4_f'],
+                        st.session_state.user_data['resp_4_g'],
+                        st.session_state.user_data['resp_4_h'],
+                        st.session_state.user_data['resp_4_i'],
+                        st.session_state.user_data['resp_4_j'],
+                        st.session_state.user_data['resp_4_k'],
+                        st.session_state.user_data['resp_4_l'],
+                        st.session_state.user_data['resp_4_m'],
+                        st.session_state.user_data['resp_4_n'],
+                        st.session_state.user_data['resp_4_o'],
+                        st.session_state.user_data['resp_4_p'],
+                        st.session_state.user_data['resp_4_q'],
+                        st.session_state.user_data['resp_4_r'],
+                        st.session_state.user_data['resp_4_s'],
+                        st.session_state.user_data['resp_4_t'],
+                        dt.datetime.now()
+                    ))
 
-                    #create a MIMETesxt object for the email message
-                    msg = MIMEMultipart()
-                    msg['From'] = 'AVON HMO Client Services'
-                    msg['To'] = recipient_email
-                    msg['Bcc'] = ', '.join(bcc_email_list)
-                    msg['Subject'] = subject
-                    if client == 'UNITED BANK FOR AFRICA':
-                        if selected_provider == 'UBA Head Office - Marina, Lagos Island.':
-                            msg.attach(MIMEText(head_office_msg, 'html'))
-                        # elif selected_provider == 'UBA FESTAC Branch.':
-                        #     msg.attach(MIMEText(festac_office_msg, 'html'))
-                        elif (selected_provider == 'CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja') or (selected_provider == 'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I'):
-                            msg.attach(MIMEText(cerba_message, 'html'))
+                    # Commit the transaction to save the data to the database
+                    conn.commit()
+
+                    # Provide feedback to the user
+                    st.info(f'Thank you {enrollee_name}.\n\n'
+                        f'Your annual wellness has been successfully booked.\n\n'
+                        f'###Please note that you have from now till {six_weeks} to complete your annual wellness exercise.')
+
+                except Exception as e:
+                    st.error(f"An error occurred: {str(e)}")
+
+                finally:
+                    # Close the cursor and the database connection
+                    cursor.close()
+                    conn.close()
+
+                    recipient_email = email
+                    subject = 'AVON ENROLLEE WELLNESS APPOINTMENT CONFIRMATION'
+                    # Create a table (HTML format) with some sample data
+                    msg_befor_table = f'''
+                    Dear {enrollee_name},<br><br>
+                    We hope you are staying safe.<br><br>
+                    You have been scheduled for a wellness screening at your selected provider, see the below table for details.<br><br>
+                    '''
+                    #create a table with the booking information
+                    wellness_table = {
+                        "Appointment Date": [selected_date_str + ' - ' + session],
+                        "Wellness Facility": [selected_provider],
+                        "Wellness Benefits": [benefits]
+                    }
+
+                    #convert the wellness_table to a html table
+                    wellness_table_html = pd.DataFrame(wellness_table).to_html(index=False, escape=False, justify='center')
+
+                    #initialise an empty table
+                    table_html = f"""
+                    <style>
+                    table {{
+                            border: 1px solid #1C6EA4;
+                            background-color: #EEEEEE;
+                            width: 100%;
+                            text-align: left;
+                            border-collapse: collapse;
+                            }}
+                            table td, table th {{
+                            border: 1px solid #AAAAAA;
+                            padding: 3px 2px;
+                            }}
+                            table tbody td {{
+                            font-size: 13px;
+                            }}
+                            table thead {{
+                            background: #59058D;
+                            border-bottom: 2px solid #444444;
+                            }}
+                            table thead th {{
+                            font-size: 15px;
+                            font-weight: bold;
+                            color: #FFFFFF;
+                            border-left: 2px solid #D0E4F5;
+                            }}
+                            table thead th:first-child {{
+                            border-left: none;
+                            }}
+                    </style>
+                    <table>
+                    {wellness_table_html}
+                    </table>
+                    """
+
+                    # table_html += f"""
+                    # <tr>
+                    #     <td>{selected_date_str} - {session}</td>
+                    #     <td>{selected_provider}</td>
+                    #     <td>{benefits}</td>
+                    # </tr>
+                    # """
+
+                    # table_html += "</table>" #close the table
+
+                    #customised text for upcountry
+                    text_after_table = f'''
+                    <br>Kindly note the following requirements for your wellness exercise:<br><br>
+
+                    -Present at the hospital with your Avon member ID number ({enrollee_id})/ Ecard.<br>
+                    -Provide the facility with your valid email address to mail your result.<br>
+                    -Visit your designated centers between the hours of 8 am - 11 am any day of the week from the scheduled date communicated.<br>
+                    -Arrive at the facility fasting i.e. last meals should be before 9 pm the previous night and nothing should be eaten that morning before the test.
+                    You are allowed to drink up to two cups of water.<br><br>
+
+                    For the best results of your screening, it is advisable for blood tests to be done on or before 10 am.<br><br>
+                    Your results will be strictly confidential and will be sent to you directly via your email. You are advised to review
+                    your results with your primary care provider for relevant medical advice.<br><br>
+
+                    Should you require assistance at any time or wish to make any complaint about the service at any of the facilities, 
+                    please contact our Call-Center at 0700-277-9800  or send us a chat on WhatsApp at 0912-603-9532. 
+                    You can also send us an email at callcentre@avonhealthcare.com. Please be assured that an agent would always be on standby to assist you.<br><br>
+
+                    Thank you for choosing Avon HMO,<br><br>
+
+                    Medical Services.<br>
+
+                    '''
+
+                    #customised text for Lagos enrollees
+                    text_after_table1 = f'''
+                    <br>Kindly note that wellness exercise at your selected facility is strictly by appointment and
+                    and you are expected to be available at the facility on the appointment date as selected by you.<br><br>
+                    Also, note that you will be required to:<br><br>
+
+                    -Present at the facility with your Avon member ID number ({enrollee_id})/ Ecard.<br>
+                    -Provide the facility with your valid email address to mail your result.<br>
+                    -You are advised to be present at your selected facility 15 mins before your scheduled time.<br><br>
+                    
+                    Your results will be strictly confidential and will be sent to you directly via your email. You are advised to review
+                    your results with your primary care provider for relevant medical advice.<br><br>
+
+                    Should you require assistance at any time or wish to make any complaint about the service at any of the facilities, 
+                    please contact our Call-Center at 0700-277-9800  or send us a chat on WhatsApp at 0912-603-9532. 
+                    You can also send us an email at callcentre@avonhealthcare.com. Please be assured that an agent would always be on standby to assist you.<br><br>
+
+                    Thank you for choosing Avon HMO,<br><br>
+
+                    Medical Services.<br>
+
+                    '''
+                    head_office_msg = f'''
+                    Dear {enrollee_name},<br><br>
+                    We hope you are staying safe.<br><br>
+                    You have been scheduled for a wellness screening at {selected_provider}.<br><br>
+                    Find listed below your wellness benefits:<br><br><b>{benefits}</b>.<br><br>
+                    Kindly note the following regarding your wellness appointment:<br><br>
+                    - HR will reach out to you with a scheduled date and time for your annual wellness.<br><br>
+                    - Once scheduled, you are to present your Avon HMO ID card or member ID - {enrollee_id} at the point of accessing your annual wellness check.<br><br>
+                    - The wellness exercise will take place at the designated floor which will be communicated to you by the HR between 9 am and 4 pm from Monday – Friday. <br><br>
+                    - For the most accurate fasting blood sugar test results, it is advisable for blood tests to be done before 10am. <br><br>
+                    - Staff results will be sent to the email addresses provided by them to the wellness providers.<br><br>
+                    - There will be consultation with a physician to review immediate test results on-site while other test results that are not readily available will be reviewed by a physician at your Primary Care Provider.<br><br>
+                    
+                    Should you require assistance at any time or wish to make any complaint about the service rendered during this wellness exercise,
+                    please contact our Call-Center at 0700-277-9800 or send us a chat on WhatsApp at 0912-603-9532.
+                    You can also send us an email at callcentre@avonhealthcare.com. Please be assured that an agent would always be on standby to assist you.<br><br>
+                    Thank you for choosing Avon HMO.<br><br>
+                    Medical Services.<br>
+                    '''
+
+                    pivotgis_msg = f'''
+                    <br>Kindly note that this wellness activation is only valid till the 31st of December, 2023.<br><br>
+                    Also, note that you will be required to:<br><br>
+
+                    -Present at the hospital with your Avon member ID number ({enrollee_id})/ Ecard.<br>
+                    -Provide the facility with your valid email address to mail your result.<br>
+                    -You are advised to be present at your selected facility 15 mins before your scheduled time.<br><br>
+                    
+                    Your results will be strictly confidential and will be sent to you directly via your email. You are advised to review
+                    your results with your primary care provider for relevant medical advice.<br><br>
+
+                    Should you require assistance at any time or wish to make any complaint about the service at any of the facilities, 
+                    please contact our Call-Center at 0700-277-9800  or send us a chat on WhatsApp at 0912-603-9532. 
+                    You can also send us an email at callcentre@avonhealthcare.com. Please be assured that an agent would always be on standby to assist you.<br><br>
+
+                    Thank you for choosing Avon HMO,<br><br>
+
+                    Medical Services.<br>
+                    '''
+
+                    # html_string = f'''<!DOCTYPE html>
+                    #     <html lang="en">
+                    #     <head>
+                    #         <meta charset="UTF-8">
+                    #         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    #         <title>Email Message</title>
+                    #         <style>
+                    #             /* Define your styles here */
+
+                    #             .email-container {{
+                    #                 max-width: 600px;
+                    #                 margin: 0 auto;
+                    #                 padding: 20px;
+                    #                 border: 1px solid #ccc;
+                    #                 border-radius: 10px;
+                    #             }}
+                    #             .company-logo {{
+                    #                 max-width: 150px;
+                    #                 height: auto;
+                    #                 margin-bottom: 20px;
+                    #             }}
+                    #             .table-container {{
+                    #                 border: 1px solid #1C6EA4;
+                    #                 background-color: #EEEEEE;
+                    #                 width: 100%;
+                    #                 text-align: left;
+                    #                 border-collapse: collapse;
+                    #                 margin-bottom: 20px;
+                    #             }}
+                    #             .table-container td, .table-container th {{
+                    #                 border: 1px solid #AAAAAA;
+                    #                 padding: 3px 2px;
+                    #             }}
+                    #             .table-container tbody td {{
+                    #                 font-size: 13px;
+                    #             }}
+                    #             .table-container thead {{
+                    #                 background: #59058D;
+                    #                 border-bottom: 2px solid #444444;
+                    #             }}
+                    #             .table-container thead th {{
+                    #                 font-size: 15px;
+                    #                 font-weight: bold;
+                    #                 color: #FFFFFF;
+                    #                 border-left: 2px solid #D0E4F5;
+                    #             }}
+                    #             .table-container thead th:first-child {{
+                    #                 border-left: none;
+                    #             }}
+                    #         </style>
+                    #     </head>
+                    #     <body>
+                    #         <div class="email-container">
+                    #             <img src="wellness_image.png" alt="Company Logo" class="company-logo">
+                    #             <div class="table-container">
+                    #                 <!-- Your table HTML goes here -->
+                    #                 <table>
+                    #                     {wellness_table_html}
+                    #                 </table>
+                    #             </div>
+                    #             <!-- Additional text after the table -->
+                    #             <p>{text_after_table}</p>
+                    #         </div>
+                    #     </body>
+                    #     </html>
+                    #     '''
+
+                    #put the table and text together in a text border with an image added
+
+                    upcountry_message = msg_befor_table + table_html + text_after_table
+                    cerba_message = msg_befor_table + table_html + text_after_table1
+                    pivot_msg = msg_befor_table + table_html + pivotgis_msg
+                
+                    myemail = 'noreply@avonhealthcare.com'
+                    password = os.environ.get('emailpassword')
+                    # password = st.secrets["emailpassword"]
+                    #add a condition to use the citron_bcc_list whenever any of the CITRON wellness providers is selected by the enrollee
+                    if (selected_provider == 'ECHOLAB - Opposite mararaba medical centre, Tipper Garage, Mararaba') or (selected_provider == 'TOBIS CLINIC - Chief Melford Okilo Road Opposite Sobaz Filling Station, Akenfa –Epie') or (selected_provider == 'ECHOLAB - 375B Nnebisi Road, Umuagu, Asaba'):
+                        bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
+                                    'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com', 
+                                    'adeoluwa@citron-health.com', 'hello@citron-health.com']
+                    else:
+                        bcc_email_list = ['ademola.atolagbe@avonhealthcare.com', 'client.services@avonhealthcare.com',
+                                    'callcentre@avonhealthcare.com','medicalservicesdepartment@avonhealthcare.com']
+                        
+                    to_email_list =[recipient_email]
+
+                    try:
+                        server = smtplib.SMTP('smtp.office365.com', 587)
+                        server.starttls()
+
+                        #login to outlook account
+                        server.login(myemail, password)
+
+                        #create a MIMETesxt object for the email message
+                        msg = MIMEMultipart()
+                        msg['From'] = 'AVON HMO Client Services'
+                        msg['To'] = recipient_email
+                        msg['Bcc'] = ', '.join(bcc_email_list)
+                        msg['Subject'] = subject
+                        if client == 'UNITED BANK FOR AFRICA':
+                            if selected_provider == 'UBA Head Office - Marina, Lagos Island.':
+                                msg.attach(MIMEText(head_office_msg, 'html'))
+                            # elif selected_provider == 'UBA FESTAC Branch.':
+                            #     msg.attach(MIMEText(festac_office_msg, 'html'))
+                            elif (selected_provider == 'CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor, 31 Kodesoh Street, Ikeja') or (selected_provider == 'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I'):
+                                msg.attach(MIMEText(cerba_message, 'html'))
+                            else:
+                                msg.attach(MIMEText(upcountry_message, 'html'))
                         else:
                             msg.attach(MIMEText(upcountry_message, 'html'))
-                    else:
-                        msg.attach(MIMEText(upcountry_message, 'html'))
 
 
-                    all_recipients = to_email_list + bcc_email_list
-                    #send the email
-                    server.sendmail(myemail, all_recipients, msg.as_string())
-                    server.quit()
+                        all_recipients = to_email_list + bcc_email_list
+                        #send the email
+                        server.sendmail(myemail, all_recipients, msg.as_string())
+                        server.quit()
 
-                    st.success('A confirmation Email has been sent to your provided email')
-                except Exception as e:
-                    st.error(f'An error occurred: {e}')
+                        st.success('A confirmation Email has been sent to your provided email')
+                    except Exception as e:
+                        st.error(f'An error occurred: {e}')
        
     elif enrollee_id not in wellness_df['memberno'].values:
         st.info('You are not eligible to participate, please contact your HR or Client Manager')
