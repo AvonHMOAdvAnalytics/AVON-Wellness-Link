@@ -299,9 +299,10 @@ if enrollee_id:
         sterling_bank_enrollees = [str(i) for i in sterling_bank_enrollees]
 
         if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS':
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=['CERBA LANCET NIGERIA - Ikeja - Aviation Plaza, Ground Floor,31 Kodesoh Street, Ikeja',
-                                                                                               'CERBA LANCET NIGERIA - Victoria Island - 3 Babatunde Jose Street Off Ademola Adetokunbo street, V/I',
-                                                                                               'UBA Head Office - Marina, Lagos Island.'])
+            available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
+            additional_provider = 'UBA Head Office - Marina, Lagos Island'
+            available_provider = list(available_provider) + [additional_provider]
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         elif client == 'STANDARD CHARTERED BANK NIGERIA LIMITED' and state == 'LAGOS':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'Onsite - SCB Head Office - 142, Ahmadu Bello Way, Victoria Island'
@@ -314,22 +315,22 @@ if enrollee_id:
             available_provider = list(available_provider) + [additional_provider]
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility',placeholder='Select a Provider', index=None, options=available_provider)
 
-        elif client == 'STANDARD CHARTERED BANK NIGERIA LIMITED' and state == 'FCT ':
+        elif client == 'STANDARD CHARTERED BANK NIGERIA LIMITED' and state == 'FCT':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'Onsite - SCB Office, 374 Ademola Adetokunbo Crescent Wuse II, Beside Visa/Airtel Building'
             available_provider = list(available_provider) + [additional_provider]
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility',placeholder='Select a Provider', index=None, options=available_provider)
-        elif client == 'TRANSCORP POWER UGHELLI' and state == 'DELTA ':
+        elif client == 'TRANSCORP POWER UGHELLI' and state == 'DELTA':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'AVON MEDICAL SITE CLINIC, Ughelli'
             available_provider = list(available_provider) + [additional_provider]
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
-        elif client == 'TRANS AFAM POWER PLANT LIMITED' and state == 'RIVERS ':
+        elif client == 'TRANS AFAM POWER PLANT LIMITED' and state == 'RIVERS':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'AVON MEDICAL SITE CLINIC, Afam'
             available_provider = list(available_provider) + [additional_provider]
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
-        elif client == 'TULIP COCOA PROCESSING' and state == 'OGUN ':
+        elif client == 'TULIP COCOA PROCESSING' and state == 'OGUN':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'AMAZING GRACE HOSPITAL - 7, Iloro Street, Ijebu-Ode, Ogun State'
             available_provider = list(available_provider) + [additional_provider]
