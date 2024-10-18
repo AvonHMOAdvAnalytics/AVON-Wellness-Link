@@ -300,7 +300,7 @@ if enrollee_id:
 
         if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
-            additional_provider = 'UBA Head Office - Marina, Lagos Island'
+            additional_provider = 'UBA Head Office (CERBA Onsite) - Marina, Lagos Island'
             available_provider = list(available_provider) + [additional_provider]
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         elif client == 'STANDARD CHARTERED BANK NIGERIA LIMITED' and state == 'LAGOS':
