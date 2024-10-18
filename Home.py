@@ -374,19 +374,22 @@ if enrollee_id:
             # Display a date picker
             selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
         elif client == 'UNITED BANK FOR AFRICA':
-            current_date = dt.date.today()
-            # Define the maximum date as '2023-12-18' as a datetime.date object
-            max_date = dt.date(2024, 12, 31)
-            # Display a date picker
-            selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
+            if selected_provider == 'UBA Head Office (CERBA Onsite) - Marina, Lagos Island':
+                selected_date = dt.date(2024, 1, 1)
+            else:
+                current_date = dt.date.today()
+                # Define the maximum date as '2023-12-18' as a datetime.date object
+                max_date = dt.date(2024, 12, 31)
+                # Display a date picker
+                selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
         else:
             max_date = dt.date(2025, 12, 31)
             selected_date = st.date_input('Pick Your Preferred Appointment Date',max_value=max_date)
 
 
         if state == 'LAGOS':
-            if selected_provider == 'UBA Head Office - Marina, Lagos Island.':
-                st.info('Fill the questionaire below to complete your wellness booking')
+            if selected_provider == 'UBA Head Office (CERBA Onsite) - Marina, Lagos Island':
+                st.info('The date for your Wellness Exercise will be communicated to you by your HR. Kindly fill the questionaire below to complete your wellness booking')
                 selected_date_str = 'To be Communicated by the HR'
                 session = ''
                 
