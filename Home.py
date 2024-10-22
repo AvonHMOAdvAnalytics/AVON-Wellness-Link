@@ -304,21 +304,31 @@ if enrollee_id:
         gender = st.radio('Sex', options=['Male', 'Female'], index=['Male', 'Female'].index(st.session_state.user_data['gender']))
         job_type = st.selectbox('Occupation Type', placeholder='Pick your Work Category', index=None, options=['Mainly Desk Work', 'Mainly Field Work', 'Desk and Field Work', 'Physical Outdoor Work', 'Physical Indoor Work'])
         # age = st.number_input('Your Current Age', value=st.session_state.user_data['age']
-        excluded_state = 'HQ'
-        available_states = wellness_providers['STATE'].unique()
-        available_states = [state for state in available_states if state != excluded_state]
-        state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=available_states)
+        if client == 'UNITED BANK FOR AFRICA':
+            available_states = wellness_providers['STATE'].unique()
+            add_state = 'UBA HQ'
+            add_state = list(available_states) + [add_state]
+            state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=add_state)
+        else:
+            excluded_state = 'HQ'
+            available_states = wellness_providers['STATE'].unique()
+            available_states = [state for state in available_states if state != excluded_state]
+            state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=available_states)
 
         #create a list of sterling bank enrollees that have a different wellness package
         sterling_bank_enrollees = [145711, 100552, 101401, 45492, 45509, 45537, 45704, 45711, 45712, 45747, 45748, 67106, 67113, 67132, 67133, 80701, 105096, 45532]
         #convert the sterling_bank_enrollees list to a string
         sterling_bank_enrollees = [str(i) for i in sterling_bank_enrollees]
 
-        if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS':
-            available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
-            additional_provider = 'UBA Head Office (CERBA Onsite) - Marina, Lagos Island'
-            available_provider = list(available_provider) + [additional_provider]
-            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
+        # if client == 'UNITED BANK FOR AFRICA' and state == 'LAGOS':
+        #     available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
+        #     additional_provider = 'UBA Head Office (CERBA Onsite) - Marina, Lagos Island'
+        #     available_provider = list(available_provider) + [additional_provider]
+        #     selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
+        if client == 'UNITED BANK FOR AFRICA' and state == 'UBA HQ':
+            available_provider = ['UBA Head Office (CERBA Onsite) - Marina, Lagos Island']
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility',placeholder='Select a Provider', index=None, options=available_provider)
+
         elif client == 'UNITED BANK FOR AFRICA' and state == 'RIVERS':
             available_provider = ['PONYX HOSPITALS LTD - Plot 26,presidential estate, GRA phase iii, opp. NDDC H/Qrts, port- harcourt/ Aba expressway',
                                   'UNION DIAGNOSTICS - Finima Street, PortHarcourt, Rivers']
@@ -407,7 +417,7 @@ if enrollee_id:
             selected_date = st.date_input('Pick Your Preferred Appointment Date',max_value=max_date)
 
 
-        if state == 'LAGOS':
+        if (state == 'LAGOS') or (state == 'UBA HQ'):
             if selected_provider == 'UBA Head Office (CERBA Onsite) - Marina, Lagos Island':
                 st.info('The date for your Wellness Exercise will be communicated to you by your HR. Kindly fill the questionaire below to complete your wellness booking')
                 selected_date_str = 'To be Communicated by the HR'
