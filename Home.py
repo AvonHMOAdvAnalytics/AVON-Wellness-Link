@@ -367,20 +367,24 @@ if enrollee_id:
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         elif (client == 'HEIRS HOLDINGS' or enrollee_id == str(164386)) and state == 'LAGOS':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
-            additional_provider = 'AVON Medical'
+            additional_provider = 'AVON Medical - Onsite'
             available_provider = list(available_provider) + [additional_provider]
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         elif client == 'TRANSCORP PLC' and state == 'LAGOS':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
-            additional_provider = 'AVON Medical'
+            additional_provider = 'AVON Medical - Onsite'
             available_provider = list(available_provider) + [additional_provider]
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         elif client == 'AFRILAND PROPERTIES PLC' and state == 'LAGOS':
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
-            additional_provider = 'AVON Medical'
+            additional_provider = 'AVON Medical - Onsite'
             available_provider = list(available_provider) + [additional_provider]
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
-
+        elif client == 'TRANSCORP HOTELS ABUJA' and state == 'FCT':
+            available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
+            additional_provider = 'AVON Medical - Onsite'
+            available_provider = list(available_provider) + [additional_provider]
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         else:
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
