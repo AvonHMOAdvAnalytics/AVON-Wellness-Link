@@ -305,7 +305,9 @@ if enrollee_id:
         job_type = st.selectbox('Occupation Type', placeholder='Pick your Work Category', index=None, options=['Mainly Desk Work', 'Mainly Field Work', 'Desk and Field Work', 'Physical Outdoor Work', 'Physical Indoor Work'])
         # age = st.number_input('Your Current Age', value=st.session_state.user_data['age']
         if client == 'UNITED BANK FOR AFRICA':
+            excluded_state = 'HQ'
             available_states = wellness_providers['STATE'].unique()
+            available_states = [state for state in available_states if state != excluded_state]
             add_state = 'UBA HQ'
             add_state = list(available_states) + [add_state]
             state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=add_state)
