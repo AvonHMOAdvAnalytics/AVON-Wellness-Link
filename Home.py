@@ -233,8 +233,10 @@ if enrollee_id:
                                                                                 default=st.session_state.pa_tests)
             # Convert pa_tests list to a comma-separated string
             pa_tests_str = ','.join(pa_tests)
-            pa_provider = st.selectbox('Select the Wellness Provider', placeholder='Select Provider', options=['Select Provider'] + list(wellness_providers['name'].unique()),
-                                        index=0 if st.session_state.pa_provider == '' else wellness_providers['name'].unique().tolist().index(st.session_state.pa_provider) + 1)
+            wellness_providers = wellness_providers['name'].unique()
+            added_providers = ['MECURE HEALTHCARE, OSHODI', 'MECURE HEALTHCARE, LEKKI', 'CLINIX HEALTHCARE']
+            wellness_providers = list(wellness_providers) + added_providers
+            pa_provider = st.selectbox('Select the Wellness Provider', placeholder = 'Select Provider', index = None, options = wellness_providers)
             pa_issue_date = st.date_input('Select the Date the PA was Issued',value=st.session_state.pa_issue_date)
 
             #add a submit button
