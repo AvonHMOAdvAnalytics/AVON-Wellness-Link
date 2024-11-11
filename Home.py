@@ -69,7 +69,7 @@ wellness_df['memberno'] = wellness_df['memberno'].astype(int).astype(str)
 
 filled_wellness_df['MemberNo'] = filled_wellness_df['MemberNo'].astype(str)
 
-st.subheader('Welcome to AVON HMO Enrollee Annual Wellness Portal \nKindly note that you are only eligible to perform your Wellness check once in a policy year')
+st.subheader('Welcome to the AVON HMO Enrollee Annual Wellness Portal \nKindly note that you are only eligible to perform your Wellness check once in a policy year')
 
 #initialize session state to store user input
 if 'user_data' not in st.session_state:
@@ -386,6 +386,15 @@ if enrollee_id:
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             additional_provider = 'AVON Medical - Onsite'
             available_provider = list(available_provider) + [additional_provider]
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
+        elif client == 'PIVOT GIS LIMITED' and state == 'LAGOS':
+            available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
+            additional_provider = ['MECURE HEALTHCARE, OSHODI - Debo Industrial Cmpd, Plot 6, Block H, Oshodi Industrial Scheme',
+                                  'MECURE HEALTHCARE, LEKKI - Niyi Okunubi Street, Off Admiralty way. Lekki phase 1',
+                                  'CLINIX HEALTHCARE, ILUPEJU - Plot B, BLKXII, Alhaji Adejumo Avenue, Ilupeju, Lagos',
+                                  'CLINIX HEALTHCARE, FESTAC - Dele Orisabiyi Street, Amuwo Odofin, Lagos'
+                                    ]
+            available_provider = list(available_provider) + additional_provider
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         else:
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
