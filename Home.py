@@ -52,7 +52,7 @@ query2 = 'select MemberNo, MemberName, Client, email, state, selected_provider, 
             where a.PolicyEndDate = (select max(PolicyEndDate) from tbl_annual_wellness_enrollee_data b where a.MemberNo = b.MemberNo)'
 query3 = ' select a.CODE, a.STATE, PROVIDER_NAME, a.ADDRESS, PROVIDER, name\
             from Updated_Wellness_Providers a\
-            join tbl_providerclass_stg b on a.CODE = b.code'
+            join tbl_Providerlist_stg b on a.CODE = b.code'
 
 @st.cache_data(ttl = dt.timedelta(hours=4))
 def LOADING():
@@ -229,7 +229,8 @@ if enrollee_id:
             pacode = st.text_input('Input the Generated PA Code', value=st.session_state.pacode)
             pa_tests = st.multiselect('Select the Tests Conducted', options=['Physical Exam', 'Urinalysis', 'PCV', 'Blood Sugar', 'BP', 'Genotype', 'BMI', 'ECG', 'Visual Acuity',
                                                                                 'Chest X-Ray', 'Cholesterol', 'Liver Function Test', 'Electrolyte, Urea and Creatinine Test(E/U/Cr)',
-                                                                                'Stool Microscopy', 'Mammogram', 'Prostrate Specific Antigen(PSA)', 'Cervical Smear'],
+                                                                                'Stool Microscopy', 'Mammogram', 'Prostrate Specific Antigen(PSA)', 'Cervical Smear', 'Stress ECG',
+                                                                                'Hepatitis B'],
                                                                                 default=st.session_state.pa_tests)
             # Convert pa_tests list to a comma-separated string
             pa_tests_str = ','.join(pa_tests)
@@ -284,6 +285,8 @@ if enrollee_id:
         policy = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'PolicyName'].values[0]
         package = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'WellnessPackage'].values[0]
         age = int(wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'Age'].values[0])
+
+        st.write(wellness_providers.loc[wellness_providers['STATE'] == 'SOKOTO', 'PROVIDER'].unique())
 
         #write a code to assign 6weeks from the current date to a variable
         six_week_dt = dt.date.today() + dt.timedelta(weeks=6)
