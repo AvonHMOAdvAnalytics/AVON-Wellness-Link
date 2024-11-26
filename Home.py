@@ -286,7 +286,7 @@ if enrollee_id:
         package = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'WellnessPackage'].values[0]
         age = int(wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'Age'].values[0])
 
-        st.write(wellness_providers.loc[wellness_providers['STATE'] == 'SOKOTO', 'PROVIDER'].unique())
+        # st.write(wellness_providers.loc[wellness_providers['STATE'] == 'SOKOTO', 'PROVIDER'].unique())
 
         #write a code to assign 6weeks from the current date to a variable
         six_week_dt = dt.date.today() + dt.timedelta(weeks=6)
