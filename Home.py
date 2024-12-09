@@ -414,6 +414,19 @@ if enrollee_id:
         #create a different benefits for specific sterling bank enrollees based on their enrollee_id
         elif enrollee_id in sterling_bank_enrollees:
             benefits = 'Physical Exam, BP, Blood Sugar, Urinalysis, Chest X-Ray, Stool Microscopy, Cholesterol, Prostate Specific Antigen(PSA)'
+        #create a different benefits package for etranzact enrollees based on their gender and age
+        elif client == 'ETRANZACT':
+            if policy not in ('PLUS PLAN 2019', 'ETRANZACT PLUS PLAN NEW'):
+                if age > 40 and gender == 'Male':
+                    benefits = 'Physical Examination, Blood Pressure Check, Fasting Blood Sugar, Stool Microscopy, BMI, Urinalysis, Cholesterol, Genotype, Packed Cell Volume, Chest X-Ray, ECG, Liver Function Test, E/U/Cr, PSA'
+                elif age > 40 and gender == 'Female':
+                    benefits = 'Physical Examination, Blood Pressure Check, Fasting Blood Sugar, Stool Microscopy, BMI, Urinalysis, Cholesterol, Genotype, Packed Cell Volume, Chest X-Ray, ECG, Liver Function Test, E/U/Cr, Mamogram every 2 Years'
+                elif 30 < age <= 40 and gender == 'Female':
+                    benefits = 'Physical Examination, Blood Pressure Check, Fasting Blood Sugar, Stool Microscopy, BMI, Urinalysis, Cholesterol, Genotype, Packed Cell Volume, Chest X-Ray, ECG, Liver Function Test, E/U/Cr, Breast Scan every 2 Years'
+                else:
+                    benefits = 'Physical Examination, Blood Pressure Check, Fasting Blood Sugar, Stool Microscopy, BMI, Urinalysis, Cholesterol, Genotype, Packed Cell Volume, Chest X-Ray, ECG, Liver Function Test, E/U/Cr'
+            else:
+                benefits = package
         else:
             benefits = package
 
