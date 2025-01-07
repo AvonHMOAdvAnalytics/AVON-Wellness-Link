@@ -442,7 +442,7 @@ if enrollee_id:
             else:
                 current_date = dt.date.today()
                 # Define the maximum date as '2023-12-18' as a datetime.date object
-                max_date = dt.date(2024, 12, 31)
+                max_date = dt.date(2025, 2, 1)
                 # Display a date picker
                 selected_date = st.date_input("Select Your Preferred Appointment Date", min_value=current_date,max_value=max_date)
         else:
