@@ -54,7 +54,7 @@ query3 = ' select a.CODE, a.STATE, PROVIDER_NAME, a.ADDRESS, PROVIDER, name\
             from Updated_Wellness_Providers a\
             join tbl_Providerlist_stg b on a.CODE = b.code'
 
-@st.cache_data(ttl = dt.timedelta(hours=4))
+# @st.cache_data(ttl = dt.timedelta(hours=4))
 def LOADING():
     wellness_df = pd.read_sql(query1, conn)
     wellness_providers = pd.read_sql(query3, conn)
@@ -181,103 +181,103 @@ if enrollee_id:
                 f'Wellness Facility: {provider}.\n\n'
                 f'Wellness Benefits: {package}.\n\n'
                 f'Appointment Date: {app_date} - {app_session}.\n\n'
-                f'Kindly contact your Client Manager if you wish change your booking appointment.\n\n'
+                f'Kindly contact your Client Manager if you wish change your booking appointment/wellness center.\n\n'
                 f'###Note that your annual wellness is only valid till {six_weeks}.\n\n'
                 ,icon="✅")
         
-        #check if the user is logged in
-        if 'logged_in' not in st.session_state:
-            st.session_state.logged_in = False
+        # #check if the user is logged in
+        # if 'logged_in' not in st.session_state:
+        #     st.session_state.logged_in = False
 
-        #Initialise form state
-        if 'pacode' not in st.session_state:
-            st.session_state.pacode = ''
-        if 'pa_tests' not in st.session_state:
-            st.session_state.pa_tests = []
-        if 'pa_provider' not in st.session_state:
-            st.session_state.pa_provider = ''
-        if 'pa_issue_date' not in st.session_state:
-            st.session_state.pa_issue_date = dt.date.today()
+        # #Initialise form state
+        # if 'pacode' not in st.session_state:
+        #     st.session_state.pacode = ''
+        # if 'pa_tests' not in st.session_state:
+        #     st.session_state.pa_tests = []
+        # if 'pa_provider' not in st.session_state:
+        #     st.session_state.pa_provider = ''
+        # if 'pa_issue_date' not in st.session_state:
+        #     st.session_state.pa_issue_date = dt.date.today()
 
-        #Login form in the sidebar
-        if not st.session_state.logged_in:
-            #create a button to enable contact center agent fill in the details of the generated PA code
-            st.subheader('For Internal Use Only. Kindly Login to Access the PA Authorisation Page')
-            st.sidebar.title("PA Authorisation Page")
-            # st.sidebar.write("Login with your username and password to access the portal.")
-            username = st.sidebar.text_input("Username")
-            password = st.sidebar.text_input("Password", type="password")
+        # #Login form in the sidebar
+        # if not st.session_state.logged_in:
+        #     #create a button to enable contact center agent fill in the details of the generated PA code
+        #     st.subheader('For Internal Use Only. Kindly Login to Access the PA Authorisation Page')
+        #     st.sidebar.title("PA Authorisation Page")
+        #     # st.sidebar.write("Login with your username and password to access the portal.")
+        #     username = st.sidebar.text_input("Username")
+        #     password = st.sidebar.text_input("Password", type="password")
 
-        if st.sidebar.button("LOGIN"):
-            if username == login_username and password == login_password:
-                st.sidebar.success("Login Successful")
-                st.session_state.logged_in = True
-                st.experimental_rerun()
-            else:
-                st.error("Username/password is incorrect")
+        # if st.sidebar.button("LOGIN"):
+        #     if username == login_username and password == login_password:
+        #         st.sidebar.success("Login Successful")
+        #         st.session_state.logged_in = True
+        #         st.experimental_rerun()
+        #     else:
+        #         st.error("Username/password is incorrect")
 
-        #add a logout button
-        else:
-            if st.sidebar.button("LOGOUT", help="Click to logout"):
-                st.session_state.logged_in = False
-                st.experimental_rerun()
+        # #add a logout button
+        # else:
+        #     if st.sidebar.button("LOGOUT", help="Click to logout"):
+        #         st.session_state.logged_in = False
+        #         st.experimental_rerun()
 
-        if st.session_state.logged_in:
-            st.write('Fill the details of the PA issued to Enrollee below to complete the wellness booking for the enrollee')
+        # if st.session_state.logged_in:
+        #     st.write('Fill the details of the PA issued to Enrollee below to complete the wellness booking for the enrollee')
 
-            # with st.form(key='my_form'):
-            pacode = st.text_input('Input the Generated PA Code', value=st.session_state.pacode)
-            pa_tests = st.multiselect('Select the Tests Conducted', options=['Physical Exam', 'Urinalysis', 'PCV', 'Blood Sugar', 'BP', 'Genotype', 'BMI', 'ECG', 'Visual Acuity',
-                                                                                'Chest X-Ray', 'Cholesterol', 'Liver Function Test', 'Electrolyte, Urea and Creatinine Test(E/U/Cr)',
-                                                                                'Stool Microscopy', 'Mammogram', 'Prostrate Specific Antigen(PSA)', 'Cervical Smear', 'Stress ECG',
-                                                                                'Hepatitis B', 'Lipid Profile Test'],
-                                                                                default=st.session_state.pa_tests)
-            # Convert pa_tests list to a comma-separated string
-            pa_tests_str = ','.join(pa_tests)
-            wellness_providers = wellness_providers['name'].unique()
-            added_providers = ['MECURE HEALTHCARE, OSHODI', 'MECURE HEALTHCARE, LEKKI', 'CLINIX HEALTHCARE', 'TEEKAY HOSPITAL LIMITED']
-            wellness_providers = list(wellness_providers) + added_providers
-            pa_provider = st.selectbox('Select the Wellness Provider', placeholder = 'Select Provider', index = None, options = wellness_providers)
-            pa_issue_date = st.date_input('Select the Date the PA was Issued',value=st.session_state.pa_issue_date)
+        #     # with st.form(key='my_form'):
+        #     pacode = st.text_input('Input the Generated PA Code', value=st.session_state.pacode)
+        #     pa_tests = st.multiselect('Select the Tests Conducted', options=['Physical Exam', 'Urinalysis', 'PCV', 'Blood Sugar', 'BP', 'Genotype', 'BMI', 'ECG', 'Visual Acuity',
+        #                                                                         'Chest X-Ray', 'Cholesterol', 'Liver Function Test', 'Electrolyte, Urea and Creatinine Test(E/U/Cr)',
+        #                                                                         'Stool Microscopy', 'Mammogram', 'Prostrate Specific Antigen(PSA)', 'Cervical Smear', 'Stress ECG',
+        #                                                                         'Hepatitis B', 'Lipid Profile Test'],
+        #                                                                         default=st.session_state.pa_tests)
+        #     # Convert pa_tests list to a comma-separated string
+        #     pa_tests_str = ','.join(pa_tests)
+        #     wellness_providers = wellness_providers['name'].unique()
+        #     added_providers = ['MECURE HEALTHCARE, OSHODI', 'MECURE HEALTHCARE, LEKKI', 'CLINIX HEALTHCARE', 'TEEKAY HOSPITAL LIMITED']
+        #     wellness_providers = list(wellness_providers) + added_providers
+        #     pa_provider = st.selectbox('Select the Wellness Provider', placeholder = 'Select Provider', index = None, options = wellness_providers)
+        #     pa_issue_date = st.date_input('Select the Date the PA was Issued',value=st.session_state.pa_issue_date)
 
-            #add a submit button
-            proceed = st.button("PROCEED", help="Click to proceed")
-            if proceed:
-                #initialize an empty list to store empty fields
-                empty_fields = []
-                #check if any of the fields is empty
-                if pacode == '':
-                    empty_fields.append('PA Code')
-                if len(pa_tests) == 0:
-                    empty_fields.append('Tests Conducted')
-                if pa_provider == 'Select Provider':
-                    empty_fields.append('Provider')
-                #check the content of the empty_fields list and display the appropriate message
-                if len(empty_fields) > 0:
-                    st.error(f'Please fill the following field(s): {", ".join(empty_fields)}')
-                else:
-                    #insert the generated PA code into the tbl_annual_wellness_enrollee_data on the database
-                    cursor = conn.cursor()
-                    query = """
-                    UPDATE tbl_annual_wellness_enrollee_data
-                    SET IssuedPACode = ?, PA_Tests = ?, PA_Provider = ?, PAIssueDate = ?
-                    WHERE MemberNo = ? and date_submitted = (select max(date_submitted) from tbl_annual_wellness_enrollee_data where MemberNo = ?)
-                    """
-                    cursor.execute(query, pacode, pa_tests_str, pa_provider, pa_issue_date, enrollee_id, enrollee_id)
-                    conn.commit()
-                    st.success('PA Code has been successfully updated for the enrollee')
+        #     #add a submit button
+        #     proceed = st.button("PROCEED", help="Click to proceed")
+        #     if proceed:
+        #         #initialize an empty list to store empty fields
+        #         empty_fields = []
+        #         #check if any of the fields is empty
+        #         if pacode == '':
+        #             empty_fields.append('PA Code')
+        #         if len(pa_tests) == 0:
+        #             empty_fields.append('Tests Conducted')
+        #         if pa_provider == 'Select Provider':
+        #             empty_fields.append('Provider')
+        #         #check the content of the empty_fields list and display the appropriate message
+        #         if len(empty_fields) > 0:
+        #             st.error(f'Please fill the following field(s): {", ".join(empty_fields)}')
+        #         else:
+        #             #insert the generated PA code into the tbl_annual_wellness_enrollee_data on the database
+        #             cursor = conn.cursor()
+        #             query = """
+        #             UPDATE tbl_annual_wellness_enrollee_data
+        #             SET IssuedPACode = ?, PA_Tests = ?, PA_Provider = ?, PAIssueDate = ?
+        #             WHERE MemberNo = ? and date_submitted = (select max(date_submitted) from tbl_annual_wellness_enrollee_data where MemberNo = ?)
+        #             """
+        #             cursor.execute(query, pacode, pa_tests_str, pa_provider, pa_issue_date, enrollee_id, enrollee_id)
+        #             conn.commit()
+        #             st.success('PA Code has been successfully updated for the enrollee')
 
-                    #clear the form fields
-                    st.session_state.form_submitted = True
-                    st.session_state.pacode = ''
-                    st.session_state.pa_tests = []
-                    st.session_state.pa_provider = ''
-                    st.session_state.pa_issue_date = dt.date.today()
-                    st.experimental_rerun()
+        #             #clear the form fields
+        #             st.session_state.form_submitted = True
+        #             st.session_state.pacode = ''
+        #             st.session_state.pa_tests = []
+        #             st.session_state.pa_provider = ''
+        #             st.session_state.pa_issue_date = dt.date.today()
+        #             st.experimental_rerun()
 
-            # if 'form_submitted' in st.session_state:
-            #     if st.session_state.form_submitted:
-            #         st.session_state.form_submitted = False
+        #     # if 'form_submitted' in st.session_state:
+        #     #     if st.session_state.form_submitted:
+        #     #         st.session_state.form_submitted = False
 
     elif (enrollee_id in wellness_df['memberno'].values) & (final_submit_date is None or final_submit_date <= policystart):
         enrollee_name = wellness_df.loc[wellness_df['memberno'] == enrollee_id, 'membername'].values[0]
@@ -323,7 +323,7 @@ if enrollee_id:
             state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=available_states)
 
         #create a list of sterling bank enrollees that have a different wellness package
-        sterling_bank_enrollees = [145711, 100552, 101401, 45492, 45509, 45537, 45704, 45711, 45712, 45747, 45748, 67106, 67113, 67132, 67133, 80701, 105096, 45532]
+        sterling_bank_enrollees = [100552, 101401, 45492, 45509, 45537, 45704, 45711, 45712, 45747, 45748, 67106, 67113, 67132, 67133, 80701, 105096, 45532]
         #convert the sterling_bank_enrollees list to a string
         sterling_bank_enrollees = [str(i) for i in sterling_bank_enrollees]
 
@@ -401,6 +401,13 @@ if enrollee_id:
                                     ]
             available_provider = list(available_provider) + additional_provider
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
+        elif client == 'VERTEVILLE ENERGY' and state == 'LAGOS':
+            available_provider = ['Union Diagnostics and Clinical Services - Victoria Island, Lagos']
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
+        elif client == 'VERTEVILLE ENERGY' and state == 'DELTA':
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=['Union Diagnostics and Clinical Services - Onsite'])
+        elif client == 'VERTEVILLE ENERGY' and state == 'BORNO':
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=['Kanem Hospital and Maternity - 152 Tafewa Balewa road, Opp Lamisula Police station, Mafoni ward, Maiduguri.'])
         else:
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
