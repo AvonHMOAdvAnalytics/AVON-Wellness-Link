@@ -54,7 +54,7 @@ query3 = ' select a.CODE, a.STATE, PROVIDER_NAME, a.ADDRESS, PROVIDER, name\
             from Updated_Wellness_Providers a\
             join tbl_Providerlist_stg b on a.CODE = b.code'
 
-# @st.cache_data(ttl = dt.timedelta(hours=4))
+@st.cache_data(ttl = dt.timedelta(hours=4))
 def LOADING():
     wellness_df = pd.read_sql(query1, conn)
     wellness_providers = pd.read_sql(query3, conn)
