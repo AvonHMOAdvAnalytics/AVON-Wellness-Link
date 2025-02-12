@@ -317,7 +317,7 @@ if enrollee_id:
             add_state = list(available_states) + [add_state]
             state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=add_state)
         elif client == 'VERTEVILLE ENERGY':
-            available_states = ['LAGOS', 'BORNO', 'DELTA']
+            available_states = ['LAGOS', 'BORNO', 'DELTA', 'RIVERS']
             state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=available_states)
         else:
             excluded_state = 'HQ'
@@ -411,6 +411,8 @@ if enrollee_id:
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=['Union Diagnostics and Clinical Services - Onsite'])
         elif client == 'VERTEVILLE ENERGY' and state == 'BORNO':
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=['Kanem Hospital and Maternity - 152 Tafewa Balewa road, Opp Lamisula Police station, Mafoni ward, Maiduguri.'])
+        elif client == 'VERTEVILLE ENERGY' and state == 'RIVERS':
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=['Union Diagnostic - Port-Harcourt: 2, Finima Street, Old GRA, Opp. Leventis bus-stop)'])
         else:
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
