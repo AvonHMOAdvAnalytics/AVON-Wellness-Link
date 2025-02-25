@@ -405,7 +405,7 @@ if enrollee_id:
             available_provider = list(available_provider) + additional_provider
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         elif client == 'VERTEVILLE ENERGY' and state == 'LAGOS':
-            available_provider = ['Union Diagnostics, V/I - 5 Eletu Ogabi Street, Off Adeola Odeku, Victoria Island, Lagos']
+            available_provider = ['Union Diagnostics, V/I - 5 Eletu Ogabi Street, Off Adeola Odeku, Victoria Island, Lagos', 'CERBA Lancet, V/I - 3 Babatunde Jose Street, Adetokunbo Ademola']
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
         elif client == 'VERTEVILLE ENERGY' and state == 'DELTA':
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=['Union Diagnostics and Clinical Services - Onsite'])
