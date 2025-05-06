@@ -319,6 +319,9 @@ if enrollee_id:
         elif client == 'VERTEVILLE ENERGY':
             available_states = ['LAGOS', 'BORNO', 'DELTA', 'RIVERS']
             state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=available_states)
+        elif client == 'PETROSTUFF NIGERIA LIMITED':
+            available_states = ['LAGOS', 'ABUJA', 'RIVERS']
+            state = st.selectbox('Your Current Location', placeholder='Pick your Current State of Residence', index=None, options=available_states)
         else:
             excluded_state = 'HQ'
             available_states = wellness_providers['STATE'].unique()
@@ -413,6 +416,20 @@ if enrollee_id:
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=['Kanem Hospital and Maternity - 152 Tafewa Balewa road, Opp Lamisula Police station, Mafoni ward, Maiduguri.'])
         elif client == 'VERTEVILLE ENERGY' and state == 'RIVERS':
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=['Union Diagnostic - Port-Harcourt: 2, Finima Street, Old GRA, Opp. Leventis bus-stop)'])
+        elif client == 'PETROSTUFF NIGERIA LIMITED' and state == 'LAGOS':
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None,
+                                              options=['BEACON HEALTH - No 70, Fatai Arobieke Street, Lekki Phase 1, Lagos',
+                                                       'AFRIGLOBAL MEDICARE DIAGNOSTIC CENTRE - 8 Mobolaji Bank Anthony Way Ikeja',
+                                                       'UNION DIAGNOSTICS - 5,Eletu Ogabi street off Adeola odeku V.I'
+                                                       ])
+        elif client == 'PETROSTUFF NIGERIA LIMITED' and state == 'ABUJA':
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None,
+                                              options=['BODY AFFAIRS DIAGNOSTICS - 1349, Ahmadu Bello Way, Garki 2, Abuja'
+                                                       ])
+        elif client == 'PETROSTUFF NIGERIA LIMITED' and state == 'RIVERS':
+            selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None,
+                                              options=['PONYX HOSPITALS LTD - Plot 26, Presidential Estate, GRA Phase III, opp. NDDC H/Qrts, Port-Harcourt/Aba Expressway'
+                                                       ])
         else:
             available_provider = wellness_providers.loc[wellness_providers['STATE'] == state, 'PROVIDER'].unique()
             selected_provider = st.selectbox('Pick your Preferred Wellness Facility', placeholder='Select a Provider', index=None, options=available_provider)
@@ -423,6 +440,13 @@ if enrollee_id:
             benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Ray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test, Prostrate Specific Antigen'
         elif client == 'UNITED BANK FOR AFRICA' and age < 40:
             benefits = 'Physical Exam, Urinalysis, PCV, Blood Sugar, BP, Genotype, BMI, Chest X-Rray, Cholesterol, Liver Function Test, Electrolyte,Urea and Creatinine Test'
+        elif client == 'PETROSTUFF NIGERIA LIMITED' and policy == 'PLUS PLAN 2019':
+            benefits = 'Physical Examination, BP, BMI, Blood Sugar, Urinalysis, Genotype, Cholesterol, Mantoux/TB Test, Chest X-ray, Full Blood Count, Liver Function Test, Lipid Profile, Stool Microscopy, ECG, Hepatitis B Screening, HIV Screening, E/U/Cr'
+        elif client == 'PETROSTUFF NIGERIA LIMITED' and policy == 'PRESTIGE PLAN 2019':
+            benefits = 'Physical Examination, BP, BMI, Blood Sugar, Urinalysis, Genotype, Cholesterol, Mantoux/TB Test, Chest X-ray, Full Blood Count, Liver Function Test, Lipid Profile, Stool Microscopy, ECG, Hepatitis B Screening, HIV Screening, E/U/Cr, PSA Men 40+'
+        elif client == 'PETROSTUFF NIGERIA LIMITED' and policy == 'PRESTIGE PLUS PLAN 2019':
+            benefits = 'Physical Examination, BP, BMI, Blood Sugar, Urinalysis, Genotype, Cholesterol, Mantoux/TB Test, Chest X-ray, Full Blood Count, Liver Function Test, Lipid Profile, Stool Microscopy, ECG, Hepatitis B Screening, HIV Screening, E/U/Cr, PSA Men 40+'
+        
         #create a different benefits for specific sterling bank enrollees based on their enrollee_id
         elif enrollee_id in sterling_bank_enrollees:
             benefits = 'Physical Exam, BP, Blood Sugar, Urinalysis, Chest X-Ray, Stool Microscopy, Cholesterol, Prostate Specific Antigen(PSA)'
