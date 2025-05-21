@@ -134,7 +134,11 @@ if 'user_data' not in st.session_state:
 
 # # Define selectbox options and their corresponding indices
 # state_options = ['ABIA', 'ABUJA', 'LAGOS', 'KANO', 'KADUNA', 'OGUN', 'OYO']
-enrollee_id = st.text_input('Kindly input your Member ID to confirm your eligibility')
+# Get enrollee ID from URL query parameters
+query_params = st.experimental_get_query_params()
+default_enrollee_id = query_params.get("member", [""])[0]  # "member" comes from ?member=12345
+enrollee_id = st.text_input('Kindly input your Member ID to confirm your gym eligibility', value=default_enrollee_id)
+#enrollee_id = st.text_input('Kindly input your Member ID to confirm your eligibility')
 
 #add a submit button
 st.button("Submit", key="button1", help="Click or Press Enter")
